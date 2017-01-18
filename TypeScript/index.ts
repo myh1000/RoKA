@@ -25,8 +25,6 @@
 /// <reference path="typings/he.d.ts" />
 /// <reference path="typings/handlebars.d.ts" />
 /// <reference path="typings/chrome/chrome.d.ts" />
-/// <reference path="typings/firefox/firefox.d.ts" />
-/// <reference path="typings/safari/safari.d.ts" />
 
 "use strict";
 function at_initialise() {

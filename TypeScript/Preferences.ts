@@ -24,7 +24,7 @@ module AlienTube {
             defaultDisplayAction: "alientube",
             channelDisplayActions: {}
         }
-    	
+
         /**
          * Load the preferences from the browser.
          * @param [callback] Callback for when the preferences has been loaded.
@@ -42,51 +42,13 @@ module AlienTube {
                         }
                     });
                     break;
-
-                case Browser.FIREFOX:
-                    /* Get the Firefox preferences. */
-                    Preferences.preferenceCache = self.options.preferences;
-                    if (callback) {
-                        callback();
-                    }
-                    break;
-
-                case Browser.SAFARI:
-                    if (safari.self.addEventListener) {
-                        /* Make a request to the global page to retreive the settings */
-                        let listener = safari.self.addEventListener('message', function listenerFunction(event) {
-                            if (event.name === "preferences") {
-                                Preferences.preferenceCache = event.message;
-    
-                                if (callback) {
-                                    callback();
-                                }
-                            }
-                        }, false);
-                        safari.self.tab.dispatchMessage("getPreferences", null);
-                        if (callback) {
-                            callback();
-                        }
-                    } else {
-                        let preferences = {};
-                        let numKeys = localStorage.length;
-                        for (let i = 0; i < numKeys; i++) {
-                            let keyName = localStorage.key(i);
-                            preferences[keyName] = localStorage.getItem(keyName);
-                        }
-                        Preferences.preferenceCache = preferences;
-                        if (callback) {
-                            callback();
-                        }
-                    }
-                    break;
             }
         }
 
     	/**
          * Retrieve a value from preferences, or the default value for that key.
          * @private
-         * @warning Should not be used on its own, use getString, getNumber, etc, some browsers *cough* Safari *cough* will not give the value in the correct type.
+         * @warning Should not be used on its own, use getString, getNumber, etc, some browsers will not give the value in the correct type.
          * @param key The key of the preference item.
          * @returns An object for the key as stored by the browser.
          * @see getString getNumber getBoolean getArray getObject
@@ -97,7 +59,7 @@ module AlienTube {
             }
             return this.defaults[key];
         }
-    	
+
         /**
          * Retreive a string from preferences, or the default string value for that key.
          * @param key the Key of the preference item.
@@ -140,7 +102,7 @@ module AlienTube {
             }
             return JSON.parse(Preferences.get(key));
         }
-        
+
         /**
          * Retreive an object from preferences, or the value for that key.
          * @param key the Key of the preference item.
@@ -167,33 +129,9 @@ module AlienTube {
                     chrome.storage.sync.set(Preferences.preferenceCache);
                     break;
 
-                case Browser.FIREFOX:
-                    if (typeof value === "object") {
-                        value = JSON.stringify(value);
-                    }
-                    self.port.emit("setSettingsValue", {
-                        key: key,
-                        value: value
-                    });
-                    break;
-
-                case Browser.SAFARI:
-                    if (typeof value === "object") {
-                        value = JSON.stringify(value);
-                    }
-                
-                    if (safari.self.addEventListener) {
-                        safari.self.tab.dispatchMessage("setPreference", {
-                            'key': key,
-                            'value': value
-                        });
-                    } else {
-                        localStorage.setItem(key, value);
-                    }
-                    break;
             }
         }
-        
+
         /**
          * Reset all the settings for the extension.
          */
@@ -203,16 +141,8 @@ module AlienTube {
                 case Browser.CHROME:
                     chrome.storage.sync.remove(Object.keys(Preferences.defaults));
                     break;
-
-                case Browser.FIREFOX:
-                    self.port.emit("eraseSettings", null);
-                    break;
-
-                case Browser.SAFARI:
-                    safari.self.tab.dispatchMessage("erasePreferences", null);
-                    break;
             }
-        } 
+        }
 
         /**
          * Get a list of subreddits that will not be displayed by AlienTube, either because they are not meant to show up in searches (bot accunulation subreddits) or because they are deemed too unsettling.

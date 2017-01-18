@@ -147,7 +147,7 @@ module AlienTube {
             sortController.addEventListener("change", function () {
                 Preferences.set("threadSortType", sortController.children[sortController.selectedIndex].getAttribute("value"));
 
-                this.commentSection.threadCollection.forEach(function (item) {
+                commentSection.threadCollection.forEach(function (item) {
                     if (item.id === this.threadInformation.id) {
                         this.commentSection.downloadThread(item);
                     }
@@ -220,7 +220,7 @@ module AlienTube {
             }
             alientube.appendChild(contents);
         }
-    	
+
         /**
          * Either save a post or unsave an already saved post.
          * @param eventObject The event object for the click of the save button.
@@ -239,7 +239,7 @@ module AlienTube {
                 }
             });
         }
-        
+
     	/**
          * Show the report post form.
          * @param eventObject The event object for the click of the report button.
@@ -248,7 +248,7 @@ module AlienTube {
         private onReportButtonClicked(eventObject: Event) {
             new AlienTube.Reddit.Report(this.threadInformation.name, this, true);
         }
-    	
+
         /**
          * Handle the click of the Google+ Button to change to the Google+ comments.
          * @private
@@ -269,7 +269,7 @@ module AlienTube {
             document.body.style.width = "auto";
             window.getComputedStyle(document.body, null);
         }
-        
+
         /**
          * Upvote a post or remove an existing upvote.
          * @param eventObject The event object for the click of the upvote button.
@@ -304,7 +304,7 @@ module AlienTube {
                 new AlienTube.Reddit.VoteRequest(this.threadInformation.name, AlienTube.Reddit.Vote.UPVOTE);
             }
         }
-        
+
         /**
          * Downvote a comment or remove an existing downvote
          * @param eventObject The event object for the click of the downvote button.
@@ -339,7 +339,7 @@ module AlienTube {
                 new AlienTube.Reddit.VoteRequest(this.threadInformation.name, AlienTube.Reddit.Vote.DOWNVOTE);
             }
         }
-    	
+
         /**
          * Handle the click of the "comment" button, to show or hide the post comment box.
          * @private

@@ -16,30 +16,6 @@ module AlienTube {
         private static acceptableResponseTypes = [200, 201, 202, 301, 302, 303, 0];
 
         constructor(url: string, type: RequestType, callback: any, postData?: any, errorHandler?: any) {
-             if (Utilities.getCurrentBrowser() === Browser.SAFARI && safari.self.addEventListener) {
-                /* Generate a unique identifier to identify our request and response through Safari's message system. */
-                let uuid = HttpRequest.generateUUID();
-                
-                /* Message the global page to have it perform a web request for us. */
-                let listener = safari.self.addEventListener('message', function listenerFunction(event) {
-                    if (event.message.uuid !== uuid) return;
-                    
-                    if (event.message.data && callback) {
-                        callback(event.message.data);
-                    } else if (event.message.error && errorHandler) {
-                        errorHandler(event.message.error);
-                    }
-                    safari.self.removeEventListener('message', listenerFunction, false);
-                }, false);
-    	       
-                safari.self.tab.dispatchMessage("XHR", {
-                    'url': url,
-                    'uuid': uuid,
-                    'requestType': type,
-                    'postData': postData
-                });
-                
-            } else {
                 let xhr = new XMLHttpRequest();
                 xhr.open(RequestType[type], url, true);
                 xhr.withCredentials = true;
@@ -50,7 +26,7 @@ module AlienTube {
                 xhr.onerror = function (e) {
                     if (errorHandler) errorHandler(xhr.status);
                 }.bind(this);
-                
+
                 xhr.onload = function () {
                     if (HttpRequest.acceptableResponseTypes.indexOf(xhr.status) !== -1) {
                         /* This is an acceptable response, we can now call the callback and end successfuly. */
@@ -62,7 +38,7 @@ module AlienTube {
                         if (errorHandler) errorHandler(xhr.status);
                     }
                 }.bind(this);
-                
+
                 /* Convert the post data array to a query string. */
                 if (type === RequestType.POST) {
                     let query = [];
@@ -74,7 +50,6 @@ module AlienTube {
                     xhr.send();
                 }
             }
-        }
 
 
 

@@ -22,33 +22,8 @@ module AlienTube {
         ];
 
         constructor(callback?) {
-            switch (Utilities.getCurrentBrowser()) {
-                case Browser.SAFARI:
-                    let localisation = navigator.language.split('-')[0];
-                    if (this.supportedLocalisations.indexOf(localisation) === -1) {
-                        localisation = "en";
-                    }
-                    
-                    new HttpRequest(`${safari.extension.baseURI}_locales/${localisation}/messages.json`, RequestType.GET, function (data)  {
-                        this.localisationData = JSON.parse(data);
-                        if (callback) {
-                            requestAnimationFrame(callback);
-                        }
-                    }.bind(this));
-                    break;
-
-                case Browser.FIREFOX:
-                    this.localisationData = JSON.parse(self.options.localisation);
-                    if (callback) {
-                        requestAnimationFrame(callback);
-                    }
-                    break;
-
-                default:
-                    if (callback) {
-                        requestAnimationFrame(callback);
-                    }
-                    break;
+            if (callback) {
+                requestAnimationFrame(callback);
             }
         }
 
@@ -67,29 +42,10 @@ module AlienTube {
                         return chrome.i18n.getMessage(key);
                     }
                     break;
-
-                case Browser.SAFARI:
-                case Browser.FIREFOX:
-                    if (placeholders) {
-                        let localisationItem = this.localisationData[key];
-                        if (localisationItem) {
-                            let message = localisationItem.message;
-                            for (let placeholder in localisationItem.placeholders) {
-                                if (localisationItem.placeholders.hasOwnProperty(placeholder)) {
-                                    let placeHolderArgumentIndex = parseInt(localisationItem.placeholders[placeholder].content.substring(1), 10);
-                                    message = message.replace("$" + placeholder.toUpperCase() + "$", placeholders[placeHolderArgumentIndex - 1]);
-                                }
-                            }
-                            return message;
-                        }
-                    } else {
-                        return this.localisationData[key] ? this.localisationData[key].message : "";
-                    }
-                    break;
             }
             return "";
         }
-        
+
         /**
          * Retreive a localised string related to a number of items, localising plurality by language.
          * @param key The key for the non-plural version of the string.
