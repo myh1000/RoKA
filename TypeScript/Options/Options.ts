@@ -4,11 +4,11 @@
 /// <reference path="../Migration.ts" />
 
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoKA operations.
+    * @namespace RoKA
 */
 "use strict";
-module AlienTube {
+module RoKA {
     /**
      * The extension ptions page for all browsers.
      * @class Options
@@ -170,7 +170,7 @@ module AlienTube {
          */
         private resetSettings() {
             Preferences.reset();
-            new AlienTube.Options();
+            new RoKA.Options();
             Preferences.set("lastRunVersion", Options.getExtensionVersionNumber());
         }
 
@@ -294,7 +294,7 @@ module AlienTube {
         }
     }
 
-    interface AlienTubePreferenceKeys {
+    interface RoKAPreferenceKeys {
         hiddenPostScoreThreshold: number;
         hiddenCommentScoreThreshold: number;
         showGooglePlusWhenNoPosts: boolean;
@@ -303,4 +303,4 @@ module AlienTube {
     }
 }
 
-new AlienTube.Options();
+new RoKA.Options();

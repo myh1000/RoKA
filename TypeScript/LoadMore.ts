@@ -1,9 +1,9 @@
 /// <reference path="index.ts" />
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoKA operations.
+    * @namespace RoKA
 */
-module AlienTube {
+module RoKA {
     /**
         * A class representation and container of a single Reddit comment.
         * @class ReadMore

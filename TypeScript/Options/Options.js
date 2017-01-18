@@ -3,19 +3,19 @@
 /// <reference path="../APIKeys.ts" />
 /// <reference path="../Migration.ts" />
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoKA operations.
+    * @namespace RoKA
 */
 "use strict";
-var AlienTube;
-(function (AlienTube) {
+var RoKA;
+(function (RoKA) {
     /**
      * The extension ptions page for all browsers.
      * @class Options
      */
     var Options = (function () {
         function Options() {
-            this.localisationManager = new AlienTube.LocalisationManager(function () {
+            this.localisationManager = new RoKA.LocalisationManager(function () {
                 /* Get the element for inputs we need to specifically modify. */
                 this.defaultDisplayActionElement = document.getElementById("defaultDisplayAction");
                 /* Get the various buttons for the page. */
@@ -29,12 +29,12 @@ var AlienTube;
                 this.excludeListContainer = document.getElementById("excludedSubreddits");
                 /* Set the page title */
                 window.document.title = this.localisationManager.get("options_label_title");
-                AlienTube.Preferences.initialise(function (preferences) {
+                RoKA.Preferences.initialise(function (preferences) {
                     // Check if a version migration is necessary.
-                    if (AlienTube.Preferences.getString("lastRunVersion") !== Options.getExtensionVersionNumber()) {
-                        new AlienTube.Migration(AlienTube.Preferences.getString("lastRunVersion"));
+                    if (RoKA.Preferences.getString("lastRunVersion") !== Options.getExtensionVersionNumber()) {
+                        new RoKA.Migration(RoKA.Preferences.getString("lastRunVersion"));
                         /* Update the last run version paramater with the current version so we'll know not to run this migration again. */
-                        AlienTube.Preferences.set("lastRunVersion", Options.getExtensionVersionNumber());
+                        RoKA.Preferences.set("lastRunVersion", Options.getExtensionVersionNumber());
                     }
                     /* Go over every setting in the options panel. */
                     for (var i = 0, len = Options.preferenceKeyList.length; i < len; i += 1) {
@@ -46,7 +46,7 @@ var AlienTube;
                         if (inputElement.tagName === "SELECT") {
                             /* This control is a select/dropdown element. Retreive the existing setting for this. */
                             var selectInputElement = inputElement;
-                            var selectValue = AlienTube.Preferences.getString(Options.preferenceKeyList[i]);
+                            var selectValue = RoKA.Preferences.getString(Options.preferenceKeyList[i]);
                             /* Go over every dropdown item to find the one we need to set as selected. Unfortunately NodeList does not inherit from
                                Array and does not have forEach. Therefor we will force an iteration over it by calling Array.prototype.forEach.call */
                             var optionElementIndex = 0;
@@ -62,7 +62,7 @@ var AlienTube;
                         else if (inputElement.getAttribute("type") === "number") {
                             var numberInputElement = inputElement;
                             /* This control is a number input element. Retreive the existing setting for this. */
-                            numberInputElement.value = AlienTube.Preferences.getNumber(Options.preferenceKeyList[i]).toString();
+                            numberInputElement.value = RoKA.Preferences.getNumber(Options.preferenceKeyList[i]).toString();
                             /* Call the settings changed event when the user has pushed a key, cut to clipboard, or pasted, from clipboard */
                             inputElement.addEventListener("keyup", this.saveUpdatedSettings, false);
                             inputElement.addEventListener("cut", this.saveUpdatedSettings, false);
@@ -71,7 +71,7 @@ var AlienTube;
                         else if (inputElement.getAttribute("type") === "checkbox") {
                             var checkboxInputElement = inputElement;
                             /* This control is a checkbox. Retreive the existing setting for this. */
-                            checkboxInputElement.checked = AlienTube.Preferences.getBoolean(Options.preferenceKeyList[i]);
+                            checkboxInputElement.checked = RoKA.Preferences.getBoolean(Options.preferenceKeyList[i]);
                             /* Call the settings changed event when the user has changed the state of the checkbox. */
                             checkboxInputElement.addEventListener("change", this.saveUpdatedSettings, false);
                         }
@@ -82,7 +82,7 @@ var AlienTube;
                     /* Set the localised text for the "default display action" dropdown options. */
                     this.defaultDisplayActionElement.options[0].textContent = this.localisationManager.get("options_label_roka");
                     this.defaultDisplayActionElement.options[1].textContent = this.localisationManager.get("options_label_gplus");
-                    this.excludedSubreddits = AlienTube.Preferences.getArray("excludedSubredditsSelectedByUser");
+                    this.excludedSubreddits = RoKA.Preferences.getArray("excludedSubredditsSelectedByUser");
                     /* Erase the current contents of the subreddit list, in case this is an update call on an existing page. */
                     while (this.excludeListContainer.firstChild !== null) {
                         this.excludeListContainer.removeChild(this.excludeListContainer.firstChild);
@@ -119,10 +119,10 @@ var AlienTube;
                 }
             }
             if (inputElement.getAttribute("type") === "checkbox") {
-                AlienTube.Preferences.set(inputElement.id, inputElement.checked);
+                RoKA.Preferences.set(inputElement.id, inputElement.checked);
             }
             else {
-                AlienTube.Preferences.set(inputElement.id, inputElement.value);
+                RoKA.Preferences.set(inputElement.id, inputElement.value);
             }
         };
         /**
@@ -130,9 +130,9 @@ var AlienTube;
          * @private
          */
         Options.prototype.resetSettings = function () {
-            AlienTube.Preferences.reset();
-            new AlienTube.Options();
-            AlienTube.Preferences.set("lastRunVersion", Options.getExtensionVersionNumber());
+            RoKA.Preferences.reset();
+            new RoKA.Options();
+            RoKA.Preferences.set("lastRunVersion", Options.getExtensionVersionNumber());
         };
         /**
          * Add a subreddit item to the excluded subreddits list on the options page. This does not automatically add it to preferences.
@@ -201,7 +201,7 @@ var AlienTube;
             this.addSubredditExclusionItem(subredditName, true);
             /* Add the subreddit name to the list in preferences. */
             this.excludedSubreddits.push(subredditName);
-            AlienTube.Preferences.set("excludedSubredditsSelectedByUser", this.excludedSubreddits);
+            RoKA.Preferences.set("excludedSubredditsSelectedByUser", this.excludedSubreddits);
             /* Remove the contents of the text field and reset the submit button state. */
             setTimeout(function () {
                 this.addToExcludeButton.disabled = true;
@@ -218,7 +218,7 @@ var AlienTube;
             var subredditElement = event.target.parentNode;
             /* Remove the item from the preferences file. */
             this.excludedSubreddits.splice(this.excludedSubreddits.indexOf(subredditElement.getAttribute("subreddit")), 1);
-            AlienTube.Preferences.set("excludedSubredditsSelectedByUser", this.excludedSubreddits);
+            RoKA.Preferences.set("excludedSubredditsSelectedByUser", this.excludedSubreddits);
             /* Remove the item from the list on the options page and animate its removal. */
             subredditElement.classList.add("removed");
             setTimeout(function () {
@@ -231,7 +231,7 @@ var AlienTube;
          */
         Options.getExtensionVersionNumber = function () {
             var version = "";
-            switch (AlienTube.Utilities.getCurrentBrowser()) {
+            switch (RoKA.Utilities.getCurrentBrowser()) {
                 case Browser.CHROME:
                     version = chrome.app.getDetails().version;
                     break;
@@ -247,6 +247,6 @@ var AlienTube;
         "showGooglePlusButton",
         "defaultDisplayAction"
     ];
-    AlienTube.Options = Options;
-})(AlienTube || (AlienTube = {}));
-new AlienTube.Options();
+    RoKA.Options = Options;
+})(RoKA || (RoKA = {}));
+new RoKA.Options();

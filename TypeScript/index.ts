@@ -29,7 +29,7 @@
 "use strict";
 function at_initialise() {
     if (window.top === window) {
-        new AlienTube.Application();
+        new RoKA.Application();
     }
 }
 

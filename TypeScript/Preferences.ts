@@ -1,9 +1,9 @@
 /// <reference path="Utilities.ts" />
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoKA operations.
+    * @namespace RoKA
 */
-module AlienTube {
+module RoKA {
     /**
         * Manages the Preferences across browsers.
         * @class Preferences
@@ -21,7 +21,7 @@ module AlienTube {
             redditUserIdentifierHash: "",
             excludedSubredditsSelectedByUser: [],
             displayGooglePlusByDefault: false,
-            defaultDisplayAction: "alientube",
+            defaultDisplayAction: "RoKA",
             channelDisplayActions: {}
         }
 
@@ -34,7 +34,7 @@ module AlienTube {
             Preferences.preferenceCache = {};
             switch (Utilities.getCurrentBrowser()) {
                 case Browser.CHROME:
-                    /* Get the Chrome cloud sync preferences stored for AlienTube. */
+                    /* Get the Chrome cloud sync preferences stored for RoKA. */
                     chrome.storage.sync.get(null, function (settings) {
                         Preferences.preferenceCache = settings;
                         if (callback) {
@@ -145,7 +145,7 @@ module AlienTube {
         }
 
         /**
-         * Get a list of subreddits that will not be displayed by AlienTube, either because they are not meant to show up in searches (bot accunulation subreddits) or because they are deemed too unsettling.
+         * Get a list of subreddits that will not be displayed by RoKA, either because they are not meant to show up in searches (bot accunulation subreddits) or because they are deemed too unsettling.
          * @returns An array list of subreddit names as strings.
          */
         public static get enforcedExludedSubreddits() {

@@ -1,11 +1,11 @@
 /// <reference path="index.ts" />
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoKA operations.
+    * @namespace RoKA
 */
-module AlienTube {
+module RoKA {
     /**
-        Application class for AlienTube
+        Application class for RoKA
         @class Application
     */
     "use strict";
@@ -147,7 +147,7 @@ module AlienTube {
         }
 
         /**
-        * Get the path to a ressource in the AlienTube folder.
+        * Get the path to a ressource in the RoKA folder.
         * @param path Filename to the ressource.
         * @returns Ressource path (file://)
         */
@@ -169,7 +169,7 @@ module AlienTube {
 
                 case Browser.CHROME:
                     let templateLink = document.createElement("link");
-                    templateLink.id = "alientubeTemplate";
+                    templateLink.id = "RoKATemplate";
                     templateLink.onload = function () {
                         if (callback) {
                             callback(templateLink.import);
@@ -210,7 +210,7 @@ module AlienTube {
         }
 
         /**
-         * Get the current media website that AlienTube is on
+         * Get the current media website that RoKA is on
          * @returns A "Service" enum value representing a media service.
          */
         public static currentMediaService() : Service {
@@ -224,7 +224,7 @@ module AlienTube {
         }
 
         /**
-         * Retrieve the current browser that AlienTube is running on.
+         * Retrieve the current browser that RoKA is running on.
          * @returns A "Browser" enum value representing a web browser.
          */
         static getCurrentBrowser() {

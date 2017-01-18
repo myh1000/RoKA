@@ -7,6 +7,9 @@ Original source code and inspiration from [alientube](https://github.com/xlexi/a
 
 Instructions
 -------------
-__OS X/Linux:__
+#### __OS X/Linux:__
 Run _chmod +x make.sh_ in the shell  to give the file executable rights.
-Run _make.sh --init_ to copy compile resources and copy them to the individual browser extensions.
+
+Run _./make.sh_ to copy compile resources and copy them to the individual browser extensions.
+
+Add the --debug parameter to compile in debug mode with source maps.

@@ -1,9 +1,9 @@
 /// <reference path="../index.ts" />
 /**
     * Namespace for requests to the Reddit API operations.
-    * @namespace AlienTube.Reddit
+    * @namespace RoKA.Reddit
 */
-module AlienTube.Reddit {
+module RoKA.Reddit {
     /**
         Perform a request to Reddit asking for the user's username so we can save and display it.
         @class RetreiveUsernameRequest

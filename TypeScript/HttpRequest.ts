@@ -1,8 +1,8 @@
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoKA operations.
+    * @namespace RoKA
 */
-module AlienTube {
+module RoKA {
     /**
         * HttpRequest interface across Browsers.
         * @class HttpRequest

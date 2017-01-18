@@ -1,9 +1,9 @@
 /// <reference path="index.ts" />
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoKA operations.
+    * @namespace RoKA
 */
-module AlienTube {
+module RoKA {
     /**
         * A class representation and container of a single Reddit comment.
         * @class Comment
@@ -194,9 +194,9 @@ module AlienTube {
          */
         private onSaveButtonClick(eventObject: Event) {
             let saveButton = <HTMLSpanElement> eventObject.target;
-            let savedType = saveButton.getAttribute("saved") ? AlienTube.Reddit.SaveType.UNSAVE : AlienTube.Reddit.SaveType.SAVE;
-            new AlienTube.Reddit.SaveRequest(this.commentObject.name, savedType, function () {
-                if (savedType === AlienTube.Reddit.SaveType.SAVE) {
+            let savedType = saveButton.getAttribute("saved") ? RoKA.Reddit.SaveType.UNSAVE : RoKA.Reddit.SaveType.SAVE;
+            new RoKA.Reddit.SaveRequest(this.commentObject.name, savedType, function () {
+                if (savedType === RoKA.Reddit.SaveType.SAVE) {
                     saveButton.setAttribute("saved", "true");
                     saveButton.textContent = Application.localisationManager.get("post_button_unsave");
                 } else {
@@ -212,7 +212,7 @@ module AlienTube {
          * @private
          */
         private onReportButtonClicked(eventObject: Event) {
-            new AlienTube.Reddit.Report(this.commentObject.name, this.commentThread, false);
+            new RoKA.Reddit.Report(this.commentObject.name, this.commentThread, false);
         }
 
         /**
@@ -234,7 +234,7 @@ module AlienTube {
                 let scorePointsText = this.commentObject.score === 1 ? Application.localisationManager.get("post_current_score") : Application.localisationManager.get("post_current_score_plural");
                 scoreValue.textContent = this.commentObject.score + scorePointsText;
 
-                new AlienTube.Reddit.VoteRequest(this.commentObject.name, AlienTube.Reddit.Vote.REMOVE);
+                new RoKA.Reddit.VoteRequest(this.commentObject.name, RoKA.Reddit.Vote.REMOVE);
             } else {
                 /* The user wishes to like this post */
                 if (this.commentObject.likes === false) {
@@ -249,7 +249,7 @@ module AlienTube {
                 let scorePointsText = this.commentObject.score === 1 ? Application.localisationManager.get("post_current_score") : Application.localisationManager.get("post_current_score_plural");
                 scoreValue.textContent = this.commentObject.score + scorePointsText;
 
-                new AlienTube.Reddit.VoteRequest(this.commentObject.name, AlienTube.Reddit.Vote.UPVOTE);
+                new RoKA.Reddit.VoteRequest(this.commentObject.name, RoKA.Reddit.Vote.UPVOTE);
             }
         }
 
@@ -272,7 +272,7 @@ module AlienTube {
                 let scorePointsText = this.commentObject.score === 1 ? Application.localisationManager.get("post_current_score") : Application.localisationManager.get("post_current_score_plural");
                 scoreValue.textContent = this.commentObject.score + scorePointsText;
 
-                new AlienTube.Reddit.VoteRequest(this.commentObject.name, AlienTube.Reddit.Vote.REMOVE);
+                new RoKA.Reddit.VoteRequest(this.commentObject.name, RoKA.Reddit.Vote.REMOVE);
             } else {
                 /* The user wishes to dislike this post */
                 if (this.commentObject.likes === true) {
@@ -287,7 +287,7 @@ module AlienTube {
                 let scorePointsText = this.commentObject.score === 1 ? Application.localisationManager.get("post_current_score") : Application.localisationManager.get("post_current_score_plural");
                 scoreValue.textContent = this.commentObject.score + scorePointsText;
 
-                new AlienTube.Reddit.VoteRequest(this.commentObject.name, AlienTube.Reddit.Vote.DOWNVOTE);
+                new RoKA.Reddit.VoteRequest(this.commentObject.name, RoKA.Reddit.Vote.DOWNVOTE);
             }
         }
 

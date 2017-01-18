@@ -1,9 +1,9 @@
 /// <reference path="../index.ts" />
 /**
     * Namespace for requests to the Reddit API operations.
-    * @namespace AlienTube.Reddit
+    * @namespace RoKA.Reddit
 */
-module AlienTube.Reddit {
+module RoKA.Reddit {
     /**
         Perform a request to Reddit to either save or unsave an item.
         @class RedditVoteRequest

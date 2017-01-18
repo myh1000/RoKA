@@ -1,9 +1,9 @@
 /// <reference path="../index.ts" />
 /**
     * Namespace for requests to the Reddit API operations.
-    * @namespace AlienTube.Reddit
+    * @namespace RoKA.Reddit
 */
-module AlienTube.Reddit {
+module RoKA.Reddit {
     /**
         Report a post or comment to moderators.
         @class RedditReport

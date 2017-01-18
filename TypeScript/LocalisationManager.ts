@@ -1,10 +1,10 @@
 /// <reference path="Utilities.ts" />
 /// <reference path="HttpRequest.ts" />
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoKA operations.
+    * @namespace RoKA
 */
-module AlienTube {
+module RoKA {
     /**
         * Starts a new instance of the Localisation Manager, for handling language.
         * @class LocalisationManager

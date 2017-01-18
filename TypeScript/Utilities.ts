@@ -2,10 +2,10 @@
 
 
 /**
-    * Namespace for All AlienTube operations.
-    * @namespace AlienTube
+    * Namespace for All RoKA operations.
+    * @namespace RoKA
 */
-module AlienTube {
+module RoKA {
     "use strict";
     export class Utilities {
 
