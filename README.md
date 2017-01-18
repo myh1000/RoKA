@@ -6,7 +6,6 @@ A Chrome extension that embeds Reddit comments, on KissAnime and KissManga!
 Original source code and inspiration from [alientube](https://github.com/xlexi/alientube/).
 
 # Installation
--------------
 ### OS X/Linux:
 Installation of RoKA requires Sass and TypeScript (Maybe not in the future).
 
