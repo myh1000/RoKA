@@ -7,15 +7,9 @@ Chrome/TypeScript/*
 Firefox/data/*
 Firefox/TypeScript/*
 
-Safari.safariextension/js/*
-Safari.safariextension/res/*
-Safari.safariextension/_locales/*
-Safari.safariextension/TypeScript/*
-
 *.map
 *.xpi
 *.crx
-*.safariextz
 
 TypeScript/*.js
 lib/script.js
