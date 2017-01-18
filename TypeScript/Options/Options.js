@@ -80,7 +80,7 @@ var AlienTube;
                     /* Set event handler for the reset button. */
                     this.resetButtonElement.addEventListener("click", this.resetSettings, false);
                     /* Set the localised text for the "default display action" dropdown options. */
-                    this.defaultDisplayActionElement.options[0].textContent = this.localisationManager.get("options_label_alientube");
+                    this.defaultDisplayActionElement.options[0].textContent = this.localisationManager.get("options_label_roka");
                     this.defaultDisplayActionElement.options[1].textContent = this.localisationManager.get("options_label_gplus");
                     this.excludedSubreddits = AlienTube.Preferences.getArray("excludedSubredditsSelectedByUser");
                     /* Erase the current contents of the subreddit list, in case this is an update call on an existing page. */

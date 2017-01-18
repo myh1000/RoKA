@@ -91,7 +91,7 @@ module AlienTube {
 
             commentSection.set(this.representedHTMLElement);
         }
-    	
+
         /**
          * Reload the comment section.
          * @private
@@ -99,7 +99,7 @@ module AlienTube {
         private reload() {
             Application.commentSection = new CommentSection(Application.getCurrentVideoId());
         }
-    	
+
         /**
          * Handle the click of the Google+ Button to change to the Google+ comments.
          * @private

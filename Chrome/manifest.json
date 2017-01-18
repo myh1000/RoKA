@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "Reddit on KissAnime",
+  "name": "Reddit on KissAnime and KissManga",
   "short_name": "ROKA",
-  "description": "Adds Reddit comments to KissAnime",
+  "description": "Adds Reddit comments to KissAnime and KissManga",
   "author": "myh1000",
   "homepage_url": "http://same.moe/",
   "version": "1.0",

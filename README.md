@@ -1,7 +1,7 @@
 ROKA
 =========
 
-A Chrome extension that embeds Reddit comments, on KissAnime!
+A Chrome extension that embeds Reddit comments, on KissAnime and KissManga!
 
 Original source code and inspiration from [alientube](https://github.com/xlexi/alientube/).
 

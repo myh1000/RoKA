@@ -32,11 +32,11 @@ module AlienTube.Reddit {
             this.finalCallback = callback;
             this.postData = postData;
             this.loadingScreen = loadingScreen;
-            
+
             /* Perform the request. */
             this.performRequest();
         }
-        
+
         /**
          * Attempt to perform the request to the Reddit API.
          */
@@ -59,7 +59,7 @@ module AlienTube.Reddit {
             /* Perform the reddit api request */
             new HttpRequest(this.requestUrl, this.requestType, this.onSuccess.bind(this), this.postData, this.onRequestError.bind(this));
         }
-    	
+
         /**
          * Called when a successful request has been made.
          * @param responseText the response from the Reddit API.
@@ -67,7 +67,7 @@ module AlienTube.Reddit {
         private onSuccess(responseText) {
             /* Cancel the slow load timer */
             clearTimeout(this.loadTimer);
-            
+
             /* Cancel the unsuccessful load timer */
             clearTimeout(this.timeoutTimer);
 
@@ -84,7 +84,7 @@ module AlienTube.Reddit {
                 }
             }
         }
-    	
+
         /**
          * Called when a request was unsuccessful.
          * @param xhr the javascript XHR object of the request.

@@ -21,9 +21,9 @@ set -e
 
 echo
 if [ "$1" == "--debug" ]; then
-    echo Compiling AlienTube in ${standout}debug${normal} mode.
+    echo Compiling RoKA in ${standout}debug${normal} mode.
 else
-    echo Compiling AlienTube in ${standout}production${normal} mode.
+    echo Compiling RoKA in ${standout}production${normal} mode.
 fi
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' \#
 echo

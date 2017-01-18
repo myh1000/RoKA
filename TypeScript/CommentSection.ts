@@ -49,14 +49,14 @@ module AlienTube {
                                     finalResultCollection.push(result.data);
                                 }
                             });
-                            
+
                             let preferredPost, preferredSubreddit;
                             if (finalResultCollection.length > 0) {
                                 if (Application.currentMediaService() === Service.YouTube) {
                                     /* Scan the YouTube comment sections for references to subreddits or reddit threads.
                                     These will be prioritised and loaded first.  */
                                     let mRegex = /(?:http|https):\/\/(.[^/]+)\/r\/([A-Za-z0-9][A-Za-z0-9_]{2,20})(?:\/comments\/)?([A-Za-z0-9]*)/g;
-                                    
+
                                     let commentLinks = document.querySelectorAll("#eow-description a");
                                     for (var b = 0, coLen = commentLinks.length; b < coLen; b += 1) {
                                         let linkElement = <HTMLElement>commentLinks[b];
@@ -71,7 +71,7 @@ module AlienTube {
                                         }
                                     }
                                 }
-    	                       
+
                                 // Sort threads into array groups by what subreddit they are in.
                                 let getExcludedSubreddits = Preferences.enforcedExludedSubreddits.concat(Preferences.getArray("excludedSubredditsSelectedByUser"));
                                 let sortedResultCollection = {};
@@ -98,7 +98,7 @@ module AlienTube {
                                     this.threadCollection.sort(function (a, b) {
                                         return b.score > a.score
                                     }.bind(this));
-                                    
+
                                     for (let i = 0, len = this.threadCollection.length; i < len; i += 1) {
                                         if (this.threadCollection[i].subreddit === preferredSubreddit) {
                                             let threadDataForFirstTab = this.threadCollection[i];
@@ -179,7 +179,7 @@ module AlienTube {
         public set(contents: Node) {
             let redditContainer = document.createElement("section");
             redditContainer.id = "alientube";
-            
+
             let commentsContainer;
             let serviceCommentsContainer;
             if (Application.currentMediaService() === Service.YouTube) {
@@ -189,7 +189,7 @@ module AlienTube {
                 commentsContainer = document.querySelector(".comments_container");
                 serviceCommentsContainer = document.querySelector(".comments_hide");
             }
-            
+
             let previousRedditInstance = document.getElementById("alientube");
             if (previousRedditInstance) {
                 commentsContainer.removeChild(previousRedditInstance);
@@ -198,7 +198,7 @@ module AlienTube {
 
             /* Check if Dark Mode is activated, and set AlienTube to dark mode */
             this.checkEnvironmentDarkModestatus(redditContainer);
-            
+
             /* Since there is no implicit event for a css property has changed, I have set a small transition on the body background colour.
                this transition will trigger the transitionend event and we can use that to check if the background colour has changed, thereby activating dark mode. */
             document.body.addEventListener("transitionend", function (e : TransitionEvent) {
@@ -225,7 +225,7 @@ module AlienTube {
                     serviceCommentsContainer.style.height = "0"
                 }
             }
-            
+
             /* Set the setting for whether or not AlienTube should show itself on this YouTube channel */
             let allowOnChannelContainer = document.getElementById("allowOnChannelContainer");
             if (!allowOnChannelContainer) {
@@ -315,7 +315,7 @@ module AlienTube {
             } else if (Application.currentMediaService() === Service.Vimeo) {
                 maxWidth = document.getElementById("comments").offsetWidth - 80;
             }
-            
+
             let width = (21 + this.threadCollection[0].subreddit.length * 7);
             let i = 0;
 
@@ -371,7 +371,7 @@ module AlienTube {
             } else {
                 overflowContainer.style.display = "none";
             }
-            
+
             // If there is only one thread available the container should be displayed differently.
             if (this.threadCollection[0].subreddit.length === 1) {
                 tabContainer.classList.add("single");
@@ -400,7 +400,7 @@ module AlienTube {
             googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
 
             let googlePlusContainer = document.getElementById("watch-discussion");
-            
+
             if (Preferences.getBoolean("showGooglePlusButton") === false || googlePlusContainer === null) {
                 googlePlusButton.style.display = "none";
             }
@@ -418,7 +418,7 @@ module AlienTube {
                 }
             }
         }
-    	
+
         /**
          * Switch to the Reddit comment section
          * @param eventObject The event object of the click of the Reddit button.
@@ -433,7 +433,7 @@ module AlienTube {
             let redditButton = <HTMLDivElement> document.getElementById("at_switchtoreddit");
             redditButton.style.display = "none";
         }
-    	
+
         /**
             * Switch to the Google+ comment section.
             * @param eventObject The event object of the click of the Google+ button.
@@ -479,7 +479,7 @@ module AlienTube {
             }.bind(this));
         }
 
-        /** 
+        /**
             * Remove all tabs and overflow items from the DOM.
          */
         public clearTabsFromTabContainer() {
@@ -561,7 +561,7 @@ module AlienTube {
             this.showTab(this.threadCollection[0]);
             eventObject.stopPropagation();
         }
-        
+
         /**
             * Triggered when the user has changed the value of the "Allow on this channel" checkbox.
             * @param eventObject the event object of the checkbox value change.
@@ -574,7 +574,7 @@ module AlienTube {
             channelDisplayActions[channelId] = allowedOnChannel ? "alientube" : "gplus";
             Preferences.set("channelDisplayActions", channelDisplayActions);
         }
-        
+
         /**
          * Get the display action of the current channel.
          * @private
@@ -592,7 +592,7 @@ module AlienTube {
             }
             return Preferences.getString("defaultDisplayAction");
         }
-        
+
         /**
          * Get the confidence vote of a thread using Reddit's 'hot' sorting algorithm.
          * @param thread An object from the Reddit API containing thread information.
@@ -600,7 +600,7 @@ module AlienTube {
          */
         private getConfidenceForRedditThread(thread : any) : number {
             let order = Math.log(Math.max(Math.abs(thread.score), 1));
-            
+
             let sign;
             if (thread.score > 0) {
                 sign = 1;
@@ -609,11 +609,11 @@ module AlienTube {
             } else {
                 sign = 0;
             }
-            
+
             let seconds = <number> Math.floor(((new Date()).getTime() / 1000) - thread.created_utc) - 1134028003;
             return Math.round((order + sign*seconds / 4500) * 10000000) / 10000000;
         }
-        
+
         /**
          * Check whether the website is currently using a "dark mode" plugin, and change AlienTube's style to comply.
          * @param alienTubeContainer DOM node of an AlienTube section element to apply the style to.
@@ -633,7 +633,7 @@ module AlienTube {
                 alientubeContainer.classList.remove("darkmode");
             }
         }
-        
+
         /**
          * Get the Reddit search string to perform.
          * @param videoID The YouTube or Vimeo video id to make a search for.
