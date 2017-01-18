@@ -29,11 +29,7 @@
 "use strict";
 function at_initialise() {
     if (window.top === window) {
-        if (window.location.host === "alientube.co") {
-            document.body.classList.add("installed");
-        } else {
-            new AlienTube.Application();
-        }
+        new AlienTube.Application();
     }
 }
 

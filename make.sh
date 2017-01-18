@@ -85,14 +85,14 @@ echo
 echo ${standout}Compiling TypeScript Files.${normal}
 if [ "$1" == "--debug" ]; then
     echo Compiling Options page TypeScript in ES5 compatibility mode without comments with source map.
-    tsc --target ES5 --out lib/options-es5.js TypeScript/typings/es5-compatibility.ts TypeScript/Options/Options.ts --removeComments --sourcemap
+    tsc --target ES5 --out lib/options-es5.js TypeScript/typings/es5-compatibility.ts TypeScript/Options/Options.ts --removeComments --sourcemap --allowUnreachableCode
     echo Compiling Application TypeScript in ES5 compatibility mode without comments with source map.
-    tsc --target ES5 --out lib/script-es5.js TypeScript/typings/es5-compatibility.ts TypeScript/index.ts --removeComments --sourcemap
+    tsc --target ES5 --out lib/script-es5.js TypeScript/typings/es5-compatibility.ts TypeScript/index.ts --removeComments --sourcemap --allowUnreachableCode
 
     echo Compiling Options page TypeScript file without comments with source map.
-    tsc --target ES6 --out lib/options.js TypeScript/Options/Options.ts --removeComments --sourcemap
+    tsc --target ES6 --out lib/options.js TypeScript/Options/Options.ts --removeComments --sourcemap --allowUnreachableCode
     echo Compiling Application TypeScript file without comments with source map.
-    tsc --target ES6 --out lib/script.js TypeScript/index.ts --removeComments --sourcemap
+    tsc --target ES6 --out lib/script.js TypeScript/index.ts --removeComments --sourcemap --allowUnreachableCode
 else
     echo Compiling Options page TypeScript in ES5 compatibility mode with comments
     tsc --target ES5 --out lib/options-es5.js TypeScript/typings/es5-compatibility.ts TypeScript/Options/Options.ts --allowUnreachableCode
@@ -127,7 +127,7 @@ if [ "$1" == "--debug" ]; then
     echo
     cp -vf res/style.css.map Chrome/res/style.css.map
     echo
-    echo Copying TypeScript source folders.
+    echo ${standout}Copying TypeScript source folders.${normal}
     cp -fr TypeScript Chrome/
     echo
     echo
