@@ -124,9 +124,9 @@ module RoKA {
                     }
 
                     /* Populate the excluded subreddit list. */
-                    this.excludedSubreddits.forEach(function (subreddit) {
-                        this.addSubredditExclusionItem(subreddit);
-                    });
+                    for (let subreddit in this.excludedSubreddits) {
+                        this.addSubredditExclusionItem(this.excludedSubreddits[subreddit]);
+                    }
 
                     /* Validate the input to see if it is a valid subreddit on key press, cut, or paste, and aditionally check for an 'Enter' key press and process it as a submission. */
                     this.excludeSubredditsField.addEventListener("keyup", this.onExcludeFieldKeyUp.bind(this), false);
@@ -252,9 +252,10 @@ module RoKA {
             Preferences.set("excludedSubredditsSelectedByUser", this.excludedSubreddits);
 
             /* Remove the contents of the text field and reset the submit button state. */
+            let option = this;
             setTimeout(function () {
-                this.addToExcludeButton.disabled = true;
-                this.excludeSubredditsField.value = "";
+                option.addToExcludeButton.disabled = true;
+                option.excludeSubredditsField.value = "";
             }, 150);
         }
 
@@ -273,8 +274,9 @@ module RoKA {
 
             /* Remove the item from the list on the options page and animate its removal. */
             subredditElement.classList.add("removed");
+            let option = this;
             setTimeout(function () {
-                this.excludeListContainer.removeChild(subredditElement);
+                option.excludeListContainer.removeChild(subredditElement);
             }, 500);
         }
 
