@@ -16,7 +16,7 @@
 
   "content_scripts": [
     {
-      "matches": ["*://www.youtube.com/*", "*://kissanime.ru/*", "*://kissmanga.com/*"],
+      "matches": ["*://www.youtube.com/*", "*://kissanime.ru/*", "*://kissmanga.com/*", "*://vimeo.com/*"],
       "js": ["js/snuownd.js", "js/script.js"],
       "css": ["res/style.css"],
       "run_at": "document_start"
@@ -28,6 +28,7 @@
     "https://api.reddit.com/",
     "http://kissanime.ru/",
     "http://kissmanga.com/",
+    "http://vimeo.com/",
     "storage"
   ],
 
