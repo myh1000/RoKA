@@ -720,9 +720,7 @@ a[href$="/spoiler"]::before {
   #RoKA[service='YouTube'] #at_overflow > ul > li:hover {
     background: #fd4040; }
 
-#RoKA[service='Vimeo'] {
-  box-shadow: none;
-  border: 0; }
+#RoKA[service='Vimeo'] {}
   #RoKA[service='Vimeo'] .at_tab.active {
     border-bottom: 5px solid #4bf; }
     #RoKA[service='Vimeo'] .at_tab.active > a {
@@ -734,5 +732,3 @@ a[href$="/spoiler"]::before {
       color: #4bf !important; }
   #RoKA[service='Vimeo'] #at_overflow > ul > li:hover {
     background: #4bf; }
-
-/*# sourceMappingURL=style.css.map */

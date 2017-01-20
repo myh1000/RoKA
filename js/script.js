@@ -1,4 +1,3 @@
-/// <reference path="index.ts" />
 /**
     * Namespace for All RoKA operations.
     * @namespace RoKA
@@ -31,7 +30,26 @@ var RoKA;
                     observer.observe(document.getElementById("content"), config);
                     // Start a new comment section.
                     this.currentVideoIdentifier = Application.getCurrentVideoId();
-                    if (RoKA.Utilities.isVideoPage) {
+                    if (RoKA.Utilities.isVideoPage()) {
+                        Application.commentSection = new RoKA.CommentSection(this.currentVideoIdentifier);
+                    }
+                }
+                // else if (Application.currentMediaService() === Service.KissAnime) {
+                //     // Start observer to detect when a new video is loaded.
+                //     // let observer = new MutationObserver(this.vimeoMutationObserver);
+                //     // let config = { attributes: true, childList: true, characterData: true };
+                //     // observer.observe(document.querySelector(".player_area"), config);
+                //     // Start a new comment section.
+                //     this.currentVideoIdentifier = Application.getCurrentVideoId();
+                //     if (RoKA.Utilities.isVideoPage()) {
+                //         Application.commentSection = new RoKA.CommentSection(this.currentVideoIdentifier);
+                //     }
+                // }
+                else if (Application.currentMediaService() === Service.KissManga) {
+                    // Start observer to detect when a new video is loaded.
+                    // Start a new comment section.
+                    this.currentVideoIdentifier = Application.getCurrentVideoId();
+                    if (RoKA.Utilities.isVideoPage()) {
                         Application.commentSection = new RoKA.CommentSection(this.currentVideoIdentifier);
                     }
                 }
@@ -42,7 +60,7 @@ var RoKA;
                     observer.observe(document.querySelector(".player_area"), config);
                     // Start a new comment section.
                     this.currentVideoIdentifier = Application.getCurrentVideoId();
-                    if (RoKA.Utilities.isVideoPage) {
+                    if (RoKA.Utilities.isVideoPage()) {
                         Application.commentSection = new RoKA.CommentSection(this.currentVideoIdentifier);
                     }
                 }
@@ -60,7 +78,7 @@ var RoKA;
                     let reportedVideoId = Application.getCurrentVideoId();
                     if (reportedVideoId !== this.currentVideoIdentifier) {
                         this.currentVideoIdentifier = reportedVideoId;
-                        if (RoKA.Utilities.isVideoPage) {
+                        if (RoKA.Utilities.isVideoPage()) {
                             Application.commentSection = new RoKA.CommentSection(this.currentVideoIdentifier);
                         }
                     }
@@ -78,7 +96,7 @@ var RoKA;
                 let reportedVideoId = Application.getCurrentVideoId();
                 if (reportedVideoId !== this.currentVideoIdentifier) {
                     this.currentVideoIdentifier = reportedVideoId;
-                    if (RoKA.Utilities.isVideoPage) {
+                    if (RoKA.Utilities.isVideoPage()) {
                         Application.commentSection = new RoKA.CommentSection(this.currentVideoIdentifier);
                     }
                 }
@@ -99,6 +117,13 @@ var RoKA;
                             return obj[1];
                         }
                     }
+                }
+            }
+            else if (Application.currentMediaService() === Service.KissAnime) {
+            }
+            else if (Application.currentMediaService() === Service.KissManga) {
+                if (document.getElementsByTagName("title").length > 0) {
+                    return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12);
                 }
             }
             else if (Application.currentMediaService() === Service.Vimeo) {
@@ -334,7 +359,19 @@ var RoKA;
             Determine whether the current url of the tab is a YouTube/Vimeo video page.
         */
         static isVideoPage() {
-            return (window.location.pathname === "watch" || document.querySelector("meta[og:type]").getAttribute("content") === "video");
+            if (RoKA.Application.currentMediaService() == Service.YouTube) {
+                return (window.location.pathname === "/watch")
+            }
+            else if (RoKA.Application.currentMediaService() == Service.KissAnime) {
+
+            }
+            else if (RoKA.Application.currentMediaService() == Service.KissManga) {
+                return true;
+            }
+            else if (RoKA.Application.currentMediaService() == Service.Vimeo) {
+                return (document.querySelector("meta[property='og:type']").getAttribute("content") === "video");
+            }
+            return false;
         }
         static parseBoolean(arg) {
             switch (typeof (arg)) {
@@ -689,8 +726,8 @@ var RoKA;
                 serviceCommentsContainer = document.querySelector(".comments_hide");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                commentsContainer = document.querySelector(".comments_container");
-                serviceCommentsContainer = document.querySelector(".comments_hide");
+                commentsContainer = document.getElementById("disqus_thread").parentElement.parentElement
+                serviceCommentsContainer = document.getElementById("disqus_thread")
             }
             else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
                 commentsContainer = document.querySelector(".clip_main-content");
@@ -698,7 +735,7 @@ var RoKA;
             }
             // alert("this");
             // alert(commentsContainer.innerHTML);
-            // alert(serviceCommentsContainer.innerHTML);
+            // alert("SAME"+serviceCommentsContainer.innerHTML);
             let previousRedditInstance = document.getElementById("RoKA");
             if (previousRedditInstance) {
                 commentsContainer.removeChild(previousRedditInstance);
@@ -734,18 +771,16 @@ var RoKA;
             let allowOnChannelContainer = document.getElementById("allowOnChannelContainer");
             if (!allowOnChannelContainer) {
                 let actionsContainer;
+                // Only let Channel Preference load on YouTube for now
                 if (RoKA.Application.currentMediaService() === Service.YouTube) {
                     actionsContainer = document.getElementById("watch7-user-header");
+                    let allowOnChannel = RoKA.Application.getExtensionTemplateItem(this.template, "allowonchannel");
+                    allowOnChannel.children[0].appendChild(document.createTextNode(RoKA.Application.localisationManager.get("options_label_showReddit")));
+                    let allowOnChannelCheckbox = allowOnChannel.querySelector("#allowonchannel");
+                    allowOnChannelCheckbox.checked = (this.getDisplayActionForCurrentChannel() === "RoKA");
+                    allowOnChannelCheckbox.addEventListener("change", this.allowOnChannelChange, false);
+                    actionsContainer.appendChild(allowOnChannel);
                 }
-                else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
-                    actionsContainer = document.getElementsByClassName("clip_info-actions")[0];
-                }
-                let allowOnChannel = RoKA.Application.getExtensionTemplateItem(this.template, "allowonchannel");
-                allowOnChannel.children[0].appendChild(document.createTextNode(RoKA.Application.localisationManager.get("options_label_showReddit")));
-                let allowOnChannelCheckbox = allowOnChannel.querySelector("#allowonchannel");
-                allowOnChannelCheckbox.checked = (this.getDisplayActionForCurrentChannel() === "RoKA");
-                allowOnChannelCheckbox.addEventListener("change", this.allowOnChannelChange, false);
-                actionsContainer.appendChild(allowOnChannel);
             }
             /* Add RoKA contents */
             redditContainer.setAttribute("service", Service[RoKA.Application.currentMediaService()]);
@@ -819,6 +854,7 @@ var RoKA;
                 maxWidth = document.getElementById("comments").offsetWidth - 80;
             }
             let width = (21 + this.threadCollection[0].subreddit.length * 7);
+            alert(maxWidth);
             let i = 0;
             /* Calculate the width of tabs and determine how many you can fit without breaking the bounds of the comment section. */
             if (len > 0) {
@@ -1115,7 +1151,13 @@ var RoKA;
          */
         getVideoSearchString(videoID) {
             if (RoKA.Application.currentMediaService() === Service.YouTube) {
+                alert(encodeURI(`(url:3D${videoID} OR url:${videoID}) (site:youtube.com OR site:youtu.be)`));
                 return encodeURI(`(url:3D${videoID} OR url:${videoID}) (site:youtube.com OR site:youtu.be)`);
+            }
+            else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
+            }
+            else if (RoKA.Application.currentMediaService() === Service.KissManga) {
+                alert(videoID);
             }
             else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
                 return encodeURI(`url:https://vimeo.com/${videoID} OR url:http://vimeo.com/${videoID}`);
@@ -2716,31 +2758,6 @@ var RoKA;
         Reddit.RetreiveUsernameRequest = RetreiveUsernameRequest;
     })(Reddit = RoKA.Reddit || (RoKA.Reddit = {}));
 })(RoKA || (RoKA = {}));
-/// <reference path="Application.ts" />
-/// <reference path="HttpRequest.ts" />
-/// <reference path="Preferences.ts" />
-/// <reference path="CommentSection.ts" />
-/// <reference path="CommentThread.ts" />
-/// <reference path="CommentField.ts" />
-/// <reference path="Comment.ts" />
-/// <reference path="LoadMore.ts" />
-/// <reference path="LocalisationManager.ts" />
-/// <reference path="LoadingScreen.ts" />
-/// <reference path="ErrorScreen.ts" />
-/// <reference path="Utilities.ts" />
-/// <reference path="Migration.ts" />
-/// <reference path="APIKeys.ts" />
-/// <reference path="RedditAPI/RedditRequest.ts" />
-/// <reference path="RedditAPI/Comment.ts" />
-/// <reference path="RedditAPI/EditComment.ts" />
-/// <reference path="RedditAPI/Vote.ts" />
-/// <reference path="RedditAPI/Report.ts" />
-/// <reference path="RedditAPI/Save.ts" />
-/// <reference path="RedditAPI/Username.ts" />
-/// <reference path="typings/snuownd.d.ts" />
-/// <reference path="typings/he.d.ts" />
-/// <reference path="typings/handlebars.d.ts" />
-/// <reference path="typings/chrome/chrome.d.ts" />
 "use strict";
 function at_initialise() {
     if (window.top === window) {
