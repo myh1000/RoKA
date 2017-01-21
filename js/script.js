@@ -35,10 +35,6 @@ var RoKA;
                     }
                 }
                 // else if (Application.currentMediaService() === Service.KissAnime) {
-                //     // Start observer to detect when a new video is loaded.
-                //     // let observer = new MutationObserver(this.vimeoMutationObserver);
-                //     // let config = { attributes: true, childList: true, characterData: true };
-                //     // observer.observe(document.querySelector(".player_area"), config);
                 //     // Start a new comment section.
                 //     this.currentVideoIdentifier = Application.getCurrentVideoId();
                 //     if (RoKA.Utilities.isVideoPage()) {
@@ -46,7 +42,6 @@ var RoKA;
                 //     }
                 // }
                 else if (Application.currentMediaService() === Service.KissManga) {
-                    // Start observer to detect when a new video is loaded.
                     // Start a new comment section.
                     this.currentVideoIdentifier = Application.getCurrentVideoId();
                     if (RoKA.Utilities.isVideoPage()) {
@@ -122,7 +117,10 @@ var RoKA;
             else if (Application.currentMediaService() === Service.KissAnime) {
             }
             else if (Application.currentMediaService() === Service.KissManga) {
-                if (document.getElementsByTagName("title").length > 0) {
+                if ((window.location.pathname.match(/\//g) || []).length == 2) {
+                    return document.getElementsByTagName("title")[0].innerText.split("\n", 2).join("\n").trim();
+                }
+                else {
                     return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12);
                 }
             }
@@ -359,16 +357,17 @@ var RoKA;
             Determine whether the current url of the tab is a YouTube/Vimeo video page.
         */
         static isVideoPage() {
-            if (RoKA.Application.currentMediaService() == Service.YouTube) {
+            if (RoKA.Application.currentMediaService() === Service.YouTube) {
                 return (window.location.pathname === "/watch")
             }
-            else if (RoKA.Application.currentMediaService() == Service.KissAnime) {
+            else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
 
             }
-            else if (RoKA.Application.currentMediaService() == Service.KissManga) {
+            else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                 return true;
+                // do this
             }
-            else if (RoKA.Application.currentMediaService() == Service.Vimeo) {
+            else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
                 return (document.querySelector("meta[property='og:type']").getAttribute("content") === "video");
             }
             return false;
@@ -581,8 +580,10 @@ var RoKA;
                     this.set(loadingScreen.HTMLElement);
                     // Open a search request to Reddit for the video identfiier
                     let videoSearchString = this.getVideoSearchString(currentVideoIdentifier);
+                    // alert("https://api.reddit.com/search.json?q=" + videoSearchString);
                     new RoKA.Reddit.Request("https://api.reddit.com/search.json?q=" + videoSearchString, RoKA.RequestType.GET, function (results) {
                         // There are a number of ways the Reddit API can arbitrarily explode, here are some of them.
+                        // alert("res"+JSON.stringify(results, null, 2));
                         if (results === {} || results.kind !== 'Listing' || results.data.children.length === 0) {
                             this.returnNoResults();
                         }
@@ -591,11 +592,16 @@ var RoKA;
                             let finalResultCollection = [];
                             /* Filter out Reddit threads that do not lead to the video. Additionally, remove ones that have passed the 6
                             month threshold for Reddit posts and are in preserved mode, but does not have any comments. */
-                            searchResults.forEach(function (result) {
-                                if (CommentSection.validateItemFromResultSet(result.data, currentVideoIdentifier)) {
-                                    finalResultCollection.push(result.data);
-                                }
-                            });
+                            if (RoKA.Application.currentMediaService() === Service.KissAnime || RoKA.Application.currentMediaService() === Service.KissManga) {
+                                finalResultCollection.push(results.data.children[0].data);
+                            }
+                            else {
+                                searchResults.forEach(function (result) {
+                                    if (CommentSection.validateItemFromResultSet(result.data, currentVideoIdentifier)) {
+                                        finalResultCollection.push(result.data);
+                                    }
+                                });
+                            }
                             let preferredPost, preferredSubreddit;
                             if (finalResultCollection.length > 0) {
                                 if (RoKA.Application.currentMediaService() === Service.YouTube) {
@@ -850,11 +856,17 @@ var RoKA;
             if (RoKA.Application.currentMediaService() === Service.YouTube) {
                 maxWidth = document.getElementById("watch7-content").offsetWidth - 80;
             }
+            else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
+                maxWidth = document.getElementById("disqus_thread").offsetWidth - 80;
+            }
+            else if (RoKA.Application.currentMediaService() === Service.KissManga) {
+                maxWidth = document.getElementById("disqus_thread").offsetWidth - 80;
+            }
             else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
                 maxWidth = document.getElementById("comments").offsetWidth - 80;
             }
             let width = (21 + this.threadCollection[0].subreddit.length * 7);
-            alert(maxWidth);
+            // alert("maxWidth "+maxWidth);
             let i = 0;
             /* Calculate the width of tabs and determine how many you can fit without breaking the bounds of the comment section. */
             if (len > 0) {
@@ -951,7 +963,19 @@ var RoKA;
          * @private
          */
         onRedditClick(eventObject) {
-            let googlePlusContainer = document.getElementById("watch-discussion");
+            alert("sss")
+            if (RoKA.Application.currentMediaService() === Service.YouTube) {
+                var googlePlusContainer = document.getElementById("watch-discussion");
+            }
+            else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
+
+            }
+            else if (RoKA.Application.currentMediaService() === Service.KissManga) {
+                var googlePlusContainer = document.getElementById("disqus_thread");
+            }
+            else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
+                var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
+            }
             googlePlusContainer.style.visibility = "collapse";
             googlePlusContainer.style.height = "0";
             let RoKAContainer = document.getElementById("RoKA");
@@ -964,15 +988,27 @@ var RoKA;
             * @param eventObject The event object of the click of the Google+ button.
             * @private
          */
-        onGooglePlusClick(eventObject) {
-            let RoKAContainer = document.getElementById("RoKA");
-            RoKAContainer.style.display = "none";
-            let googlePlusContainer = document.getElementById("watch-discussion");
-            googlePlusContainer.style.visibility = "visible";
-            googlePlusContainer.style.height = "auto";
-            let redditButton = document.getElementById("at_switchtoreddit");
-            redditButton.style.display = "block";
-        }
+         onGooglePlusClick(eventObject) {
+             alert("ggg");
+             let RoKAContainer = document.getElementById("RoKA");
+             RoKAContainer.style.display = "none";
+             if (RoKA.Application.currentMediaService() === Service.YouTube) {
+                 var googlePlusContainer = document.getElementById("watch-discussion");
+             }
+             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
+
+             }
+             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
+                 var googlePlusContainer = document.getElementById("disqus_thread");
+             }
+             else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
+                 var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
+             }
+             googlePlusContainer.style.visibility = "visible";
+             googlePlusContainer.style.height = "auto";
+             let redditButton = document.getElementById("at_switchtoreddit");
+             redditButton.style.display = "block";
+         }
         /**
             * Update the tabs to fit the new size of the document
             * @private
@@ -1151,13 +1187,12 @@ var RoKA;
          */
         getVideoSearchString(videoID) {
             if (RoKA.Application.currentMediaService() === Service.YouTube) {
-                alert(encodeURI(`(url:3D${videoID} OR url:${videoID}) (site:youtube.com OR site:youtu.be)`));
                 return encodeURI(`(url:3D${videoID} OR url:${videoID}) (site:youtube.com OR site:youtu.be)`);
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                alert(videoID);
+                return (encodeURI(videoID));
             }
             else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
                 return encodeURI(`url:https://vimeo.com/${videoID} OR url:http://vimeo.com/${videoID}`);
@@ -1312,9 +1347,26 @@ var RoKA;
                 voteController.classList.add("disliked");
             }
             /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
-            let googlePlusButton = this.threadContainer.querySelector("#at_switchtogplus");
-            googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-            let googlePlusContainer = document.getElementById("watch-discussion");
+            if (RoKA.Application.currentMediaService() === Service.YouTube) {
+                var googlePlusButton = this.threadContainer.querySelector("#at_switchtogplus");
+                this.threadContainer.querySelector("#at_switchtodisqus").style.display = "none";
+                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
+                var googlePlusContainer = document.getElementById("watch-discussion");
+            }
+            else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
+
+            }
+            else if (RoKA.Application.currentMediaService() === Service.KissManga) {
+                var googlePlusButton = this.threadContainer.querySelector("#at_switchtodisqus");
+                this.threadContainer.querySelector("#at_switchtogplus").style.display = "none";
+                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
+                var googlePlusContainer = document.getElementById("disqus_thread");
+            }
+            else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
+                var googlePlusButton = this.threadContainer.querySelector("#at_switchtogplus");
+                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
+                var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
+            }
             if (RoKA_1.Preferences.getBoolean("showGooglePlusButton") === false || googlePlusContainer === null) {
                 googlePlusButton.style.display = "none";
             }
@@ -1391,21 +1443,27 @@ var RoKA;
          * Handle the click of the Google+ Button to change to the Google+ comments.
          * @private
          */
-        onGooglePlusClick(eventObject) {
-            let RoKAContainer = document.getElementById("RoKA");
-            RoKAContainer.style.display = "none";
-            let googlePlusContainer = document.getElementById("watch-discussion");
-            googlePlusContainer.style.visibility = "visible";
-            googlePlusContainer.style.height = "auto";
-            let redditButton = document.getElementById("at_switchtoreddit");
-            redditButton.style.display = "block";
-            /* Terrible hack to force Google+ to reload the comments by making it think the user has resized the window.
-               Having to do this makes me sad.  */
-            document.body.style.width = document.body.offsetWidth + "px";
-            window.getComputedStyle(document.body, null);
-            document.body.style.width = "auto";
-            window.getComputedStyle(document.body, null);
-        }
+         onGooglePlusClick(eventObject) {
+             alert("ggg");
+             let RoKAContainer = document.getElementById("RoKA");
+             RoKAContainer.style.display = "none";
+             if (RoKA.Application.currentMediaService() === Service.YouTube) {
+                 var googlePlusContainer = document.getElementById("watch-discussion");
+             }
+             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
+
+             }
+             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
+                 var googlePlusContainer = document.getElementById("disqus_thread");
+             }
+             else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
+                 var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
+             }
+             googlePlusContainer.style.visibility = "visible";
+             googlePlusContainer.style.height = "auto";
+             let redditButton = document.getElementById("at_switchtoreddit");
+             redditButton.style.display = "block";
+         }
         /**
          * Upvote a post or remove an existing upvote.
          * @param eventObject The event object for the click of the upvote button.
@@ -2230,15 +2288,27 @@ var RoKA;
          * Handle the click of the Google+ Button to change to the Google+ comments.
          * @private
          */
-        onGooglePlusClick(eventObject) {
-            var RoKAContainer = document.getElementById("RoKA");
-            RoKAContainer.style.display = "none";
-            var googlePlusContainer = document.getElementById("watch-discussion");
-            googlePlusContainer.style.visibility = "visible";
-            googlePlusContainer.style.height = "auto";
-            var redditButton = document.getElementById("at_switchtoreddit");
-            redditButton.style.display = "block";
-        }
+         onGooglePlusClick(eventObject) {
+             alert("ggg");
+             let RoKAContainer = document.getElementById("RoKA");
+             RoKAContainer.style.display = "none";
+             if (RoKA.Application.currentMediaService() === Service.YouTube) {
+                 var googlePlusContainer = document.getElementById("watch-discussion");
+             }
+             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
+
+             }
+             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
+                 var googlePlusContainer = document.getElementById("disqus_thread");
+             }
+             else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
+                 var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
+             }
+             googlePlusContainer.style.visibility = "visible";
+             googlePlusContainer.style.height = "auto";
+             let redditButton = document.getElementById("at_switchtoreddit");
+             redditButton.style.display = "block";
+         }
     }
     RoKA.ErrorScreen = ErrorScreen;
     var ErrorState;

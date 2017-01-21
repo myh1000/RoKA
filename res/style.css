@@ -365,6 +365,8 @@ body {
         margin-top: 10px; }
   #RoKA #at_switchtogplus {
     right: 15px; }
+  #RoKA #at_switchtodisqus {
+    right: 15px; }
 
 .at_commentmain {
   margin-left: 20px; }
@@ -634,7 +636,8 @@ a[href$="/spoiler"]::before {
     transform: rotate(360deg);
     box-shadow: 0 -0.415em 0 -0.2em #fd4040, 0 -0.415em 0 -0.21em #fd4040, 0 -0.415em 0 -0.22em #fd4040, 0 -0.415em 0 -0.23em #fd4040, 0 -0.415em 0 -0.2385em #fd4040; } }
 #at_switchtogplus,
-#at_switchtoreddit {
+#at_switchtoreddit,
+#at_switchtodisqus {
   position: absolute;
   top: 20px;
   right: 0;
@@ -643,21 +646,29 @@ a[href$="/spoiler"]::before {
   font-family: -apple-system, ".SFNSDisplay-Regular", "Helvetica Neue", "Helvetica", Arial, sans-serif;
   font-size: 13px; }
   #at_switchtogplus.noresults,
-  #at_switchtoreddit.noresults {
+  #at_switchtoreddit.noresults,
+  #at_switchtodisqus.noresults {
     pointer-events: none; }
   #at_switchtogplus:hover,
-  #at_switchtoreddit:hover {
+  #at_switchtoreddit:hover,
+  #at_switchtodisqus:hover {
     opacity: 0.8; }
   #at_switchtogplus:active,
-  #at_switchtoreddit:active {
+  #at_switchtoreddit:active,
+  #at_switchtodisqus:active {
     opacity: 1; }
-  #at_switchtogplus svg,
-  #at_switchtoreddit svg {
+  #at_switchtogplus svg {
     width: 24px;
     height: 24px;
     display: inline-block; }
+  #at_switchtoreddit svg,
+  #at_switchtodisqus svg {
+    width: 30px;
+    height: 30px;
+    display: inline-block; }
   #at_switchtogplus span,
-  #at_switchtoreddit span {
+  #at_switchtoreddit span,
+  #at_switchtodisqus span {
     vertical-align: top;
     line-height: 24px; }
 
@@ -696,7 +707,7 @@ a[href$="/spoiler"]::before {
     color: #f6f6f6 !important; }
   .darkmode article.deleted > .at_commentmain > .at_commentcontent {
     background: #4f4f4f; }
-  .darkmode #at_switchtogplus svg, .darkmode #at_switchtoreddit svg {
+  .darkmode #at_switchtogplus svg, .darkmode #at_switchtoreddit svg .darkmode #at_switchtodisqus svg {
     fill: #fff; }
   .darkmode .at_writingauthor {
     color: #acacac; }
@@ -719,6 +730,28 @@ a[href$="/spoiler"]::before {
       color: #0066aa !important; }
   #RoKA[service='YouTube'] #at_overflow > ul > li:hover {
     background: #fd4040; }
+
+#RoKA[service='KissManga'] {
+    text-align: left;
+    margin-top: 10px;
+    line-height: 5px;
+    font-size: 110%;
+    }
+    #RoKA[service='KissManga'] header .title {
+      font-size: 140%; }
+    #RoKA[service='KissManga'] .at_tab.active {
+      border-top: 2px solid #4bf;
+      border-bottom: 5px solid #4bf; }
+      #RoKA[service='KissManga'] .at_tab.active > a {
+        pointer-events: auto;
+        color: #4bf !important; }
+    #RoKA[service='KissManga'].darkmode .at_tab.active {
+      border-top: 2px solid #4bf;
+      border-bottom: 5px solid #4bf; }
+      #RoKA[service='KissManga'].darkmode .at_tab.active a {
+        color: #4bf !important; }
+    #RoKA[service='KissManga'] #at_overflow > ul > li:hover {
+      background: #4bf; }
 
 #RoKA[service='Vimeo'] {}
   #RoKA[service='Vimeo'] .at_tab.active {

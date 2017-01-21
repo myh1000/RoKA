@@ -3,5 +3,5 @@
 *.crx
 make.sh
 .sass-cache/*
-save-commands.json
+.on-save.json
 reload.scpt
