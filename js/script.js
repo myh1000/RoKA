@@ -34,13 +34,13 @@ var RoKA;
                         Application.commentSection = new RoKA.CommentSection(this.currentVideoIdentifier);
                     }
                 }
-                // else if (Application.currentMediaService() === Service.KissAnime) {
-                //     // Start a new comment section.
-                //     this.currentVideoIdentifier = Application.getCurrentVideoId();
-                //     if (RoKA.Utilities.isVideoPage()) {
-                //         Application.commentSection = new RoKA.CommentSection(this.currentVideoIdentifier);
-                //     }
-                // }
+                else if (Application.currentMediaService() === Service.KissAnime) {
+                    // Start a new comment section.
+                    this.currentVideoIdentifier = Application.getCurrentVideoId();
+                    if (RoKA.Utilities.isVideoPage()) {
+                        Application.commentSection = new RoKA.CommentSection(this.currentVideoIdentifier);
+                    }
+                }
                 else if (Application.currentMediaService() === Service.KissManga) {
                     // Start a new comment section.
                     this.currentVideoIdentifier = Application.getCurrentVideoId();
@@ -87,6 +87,12 @@ var RoKA;
                 }
             }
             else if (Application.currentMediaService() === Service.KissAnime) {
+                if ((window.location.pathname.match(/\//g) || []).length === 2) {
+                    return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").trim();
+                }
+                else if ((window.location.pathname.match(/\//g) || []).length > 2) {
+                    return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").trim() + " " + parseInt(document.getElementById("selectEpisode").options[document.getElementById("selectEpisode").selectedIndex].textContent.match(/(\.?\d+(\.\d+)?)(?!.*\d)/g));
+                }
             }
             else if (Application.currentMediaService() === Service.KissManga) {
                 if ((window.location.pathname.match(/\//g) || []).length === 2) {
@@ -95,10 +101,10 @@ var RoKA;
                 else if ((window.location.pathname.match(/\//g) || []).length > 2) {
                     //disgusting way to get Name + Chapter
                     if (document.getElementById("selectReadType").options[document.getElementById("selectReadType").selectedIndex].textContent.trim() === "One page") {
-                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+" "+parseInt(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent.match(/(\.?\d+(\.\d+)?)(?!.*\d)/g));
+                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+ " " + parseInt(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent.match(/(\.?\d+(\.\d+)?)(?!.*\d)/g));
                     }
                     else {
-                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+" "+parseInt(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent.match(/(\.?\d+(\.\d+)?)(?!.*\d)/g));
+                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12) + " " + parseInt(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent.match(/(\.?\d+(\.\d+)?)(?!.*\d)/g));
                     }
                 }
             }
@@ -330,7 +336,7 @@ var RoKA;
                 return (window.location.pathname === "/watch")
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
-
+                return (window.location.pathname.split('/')[1] === "Anime");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                 return (window.location.pathname.split('/')[1] === "Manga");
@@ -545,7 +551,7 @@ var RoKA;
                     this.set(loadingScreen.HTMLElement);
                     // Open a search request to Reddit for the video identfiier
                     let videoSearchString = this.getVideoSearchString(currentVideoIdentifier);
-                    alert("https://api.reddit.com/search.json?q=" + videoSearchString);
+                    // alert("https://api.reddit.com/search.json?q=" + videoSearchString);
                     new RoKA.Reddit.Request("https://api.reddit.com/search.json?q=" + videoSearchString, RoKA.RequestType.GET, function (results) {
                         // There are a number of ways the Reddit API can arbitrarily explode, here are some of them.
                         // alert("res"+JSON.stringify(results, null, 2));
@@ -688,8 +694,8 @@ var RoKA;
                 serviceCommentsContainer = document.getElementById("watch-discussion");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
-                commentsContainer = document.querySelector(".comments_container");
-                serviceCommentsContainer = document.querySelector(".comments_hide");
+                commentsContainer = document.getElementById("disqus_thread").parentElement.parentElement
+                serviceCommentsContainer = document.getElementById("disqus_thread")
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                 commentsContainer = document.getElementById("disqus_thread").parentElement.parentElement
@@ -789,6 +795,16 @@ var RoKA;
                 }
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
+                if ((window.location.pathname.match(/\//g) || []).length === 2) {
+                    if (itemFromResultSet.subreddit === "anime") {
+                        return true;
+                    }
+                }
+                else {
+                    if (itemFromResultSet.subreddit === "anime" || (itemFromResultSet.title.indexOf(parseInt(document.getElementById("selectEpisode").options[document.getElementById("selectEpisode").selectedIndex].textContent.match(/(\.?\d+(\.\d+)?)(?!.*\d)/g))) >= 0 && itemFromResultSet.title.toLowerCase().indexOf("episode") >= 0)) {
+                        return true;
+                    }
+                }
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                 if ((window.location.pathname.match(/\//g) || []).length === 2) {
@@ -827,7 +843,7 @@ var RoKA;
                 maxWidth = document.getElementById("watch7-content").offsetWidth - 80;
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
-                maxWidth = document.getElementById("disqus_thread").parentElement.parentElement.offsetWidth - 80;
+                maxWidth = parseInt(window.getComputedStyle(document.getElementById("disqus_thread").parentElement.parentElement).getPropertyValue("width")) - 80;
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                 maxWidth = document.getElementById("disqus_thread").parentElement.parentElement.offsetWidth - 80;
@@ -915,7 +931,10 @@ var RoKA;
                 googlePlusContainer = document.getElementById("watch-discussion");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
-
+                googlePlusButton = template.querySelector("#at_switchtodisqus");
+                template.querySelector("#at_switchtogplus").style.display = "none";
+                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
+                googlePlusContainer = document.getElementById("disqus_thread");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                 googlePlusButton = template.querySelector("#at_switchtodisqus");
@@ -948,7 +967,7 @@ var RoKA;
                 googlePlusContainer = document.getElementById("watch-discussion");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
-
+                googlePlusContainer = document.getElementById("disqus_thread");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                 googlePlusContainer = document.getElementById("disqus_thread");
@@ -973,7 +992,7 @@ var RoKA;
                  googlePlusContainer = document.getElementById("watch-discussion");
              }
              else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
-
+                 googlePlusContainer = document.getElementById("disqus_thread");
              }
              else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                  googlePlusContainer = document.getElementById("disqus_thread");
@@ -1161,6 +1180,7 @@ var RoKA;
                 return encodeURI(`(url:3D${videoID} OR url:${videoID}) (site:youtube.com OR site:youtu.be)`);
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
+                return (encodeURI(videoID));
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                 return (encodeURI(videoID));
@@ -1324,7 +1344,10 @@ var RoKA;
                 googlePlusContainer = document.getElementById("watch-discussion");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
-
+                googlePlusButton = template.querySelector("#at_switchtodisqus");
+                template.querySelector("#at_switchtogplus").style.display = "none";
+                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
+                googlePlusContainer = document.getElementById("disqus_thread");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                 googlePlusButton = this.threadContainer.querySelector("#at_switchtodisqus");
@@ -1416,7 +1439,7 @@ var RoKA;
                  googlePlusContainer = document.getElementById("watch-discussion");
              }
              else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
-
+                 googlePlusContainer = document.getElementById("disqus_thread");
              }
              else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                  googlePlusContainer = document.getElementById("disqus_thread");
@@ -2194,7 +2217,10 @@ var RoKA;
                 googlePlusContainer = document.getElementById("watch-discussion");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
-
+                googlePlusButton = template.querySelector("#at_switchtodisqus");
+                template.querySelector("#at_switchtogplus").style.display = "none";
+                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
+                googlePlusContainer = document.getElementById("disqus_thread");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                 googlePlusButton = this.representedHTMLElement.querySelector("#at_switchtodisqus");
@@ -2272,7 +2298,7 @@ var RoKA;
                  googlePlusContainer = document.getElementById("watch-discussion");
              }
              else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
-
+                 googlePlusContainer = document.getElementById("disqus_thread");
              }
              else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                  googlePlusContainer = document.getElementById("disqus_thread");
