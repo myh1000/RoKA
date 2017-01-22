@@ -365,8 +365,7 @@ var RoKA;
 
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                return true;
-                // do this
+                return (window.location.pathname.split('/')[1] === "Manga");
             }
             else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
                 return (document.querySelector("meta[property='og:type']").getAttribute("content") === "video");
