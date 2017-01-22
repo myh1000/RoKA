@@ -371,14 +371,14 @@ var RoKA;
         constructor(lastVersion) {
             this.migrations = {
                 "2.3": function () {
-                    /* Migrate the previous "Display Google+ by default" setting into the "Default display action" setting. */
+                    /* Migrate the previous "Display Disqus by default" setting into the "Default display action" setting. */
                     let displayGplusPreviousSetting = RoKA.Preferences.getBoolean("displayGooglePlusByDefault");
                     if (displayGplusPreviousSetting === true) {
                         RoKA.Preferences.set("defaultDisplayAction", "gplus");
                     }
                 },
                 "2.5": function () {
-                    /* In 2.5 RoKA now uses the youtube channel ID not the display name for setting RoKA or Google+ as default per channel.
+                    /* In 2.5 RoKA now uses the youtube channel ID not the display name for setting RoKA or Disqus as default per channel.
                     We will attempt to migrate existing entries using the YouTube API  */
                     let previousDisplayActions = RoKA.Preferences.getObject("channelDisplayActions");
                     if (previousDisplayActions) {

@@ -94,7 +94,12 @@ var RoKA;
                 }
                 else if ((window.location.pathname.match(/\//g) || []).length > 2) {
                     //disgusting way to get Name + Chapter
-                    return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+" "+parseFloat(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent.match(/(\d+)(?!.*\d)/g));
+                    if (document.getElementById("selectReadType").options[document.getElementById("selectReadType").selectedIndex].textContent.trim() === "One page") {
+                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+" "+parseInt(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent.match(/(\.?\d+(\.\d+)?)(?!.*\d)/g));
+                    }
+                    else {
+                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+" "+parseInt(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent.match(/(\.?\d+(\.\d+)?)(?!.*\d)/g));
+                    }
                 }
             }
             return null;
@@ -540,7 +545,7 @@ var RoKA;
                     this.set(loadingScreen.HTMLElement);
                     // Open a search request to Reddit for the video identfiier
                     let videoSearchString = this.getVideoSearchString(currentVideoIdentifier);
-                    // alert("https://api.reddit.com/search.json?q=" + videoSearchString);
+                    alert("https://api.reddit.com/search.json?q=" + videoSearchString);
                     new RoKA.Reddit.Request("https://api.reddit.com/search.json?q=" + videoSearchString, RoKA.RequestType.GET, function (results) {
                         // There are a number of ways the Reddit API can arbitrarily explode, here are some of them.
                         // alert("res"+JSON.stringify(results, null, 2));
@@ -707,7 +712,7 @@ var RoKA;
                 }
             }, false);
             if (serviceCommentsContainer) {
-                /* Add the "switch to Reddit" button in the google+ comment section */
+                /* Add the "switch to Reddit" button in the Disqus comment section */
                 let redditButton = document.getElementById("at_switchtoreddit");
                 if (!redditButton) {
                     let redditButtonTemplate = RoKA.Application.getExtensionTemplateItem(this.template, "switchtoreddit");
@@ -786,8 +791,15 @@ var RoKA;
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                if (itemFromResultSet.subreddit === "manga") {
-                    return true;
+                if ((window.location.pathname.match(/\//g) || []).length === 2) {
+                    if (itemFromResultSet.subreddit === "manga") {
+                        return true;
+                    }
+                }
+                else {
+                    if (itemFromResultSet.subreddit === "manga" || itemFromResultSet.title.indexOf(parseInt(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent.match(/(\.?\d+(\.\d+)?)(?!.*\d)/g))) >= 0) {
+                        return true;
+                    }
                 }
             }
             else if (itemFromResultSet.domain === "youtu.be") {
@@ -893,7 +905,7 @@ var RoKA;
             let template = RoKA.Application.getExtensionTemplateItem(this.template, "noposts");
             let message = template.querySelector(".single_line");
             message.textContent = RoKA.Application.localisationManager.get("post_label_noresults");
-            /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
+            /* Set the icon, text, and event listener for the button to switch to the Disqus comments. */
             let googlePlusButton;
             let googlePlusContainer;
             if (RoKA.Application.currentMediaService() === Service.YouTube) {
@@ -949,8 +961,8 @@ var RoKA;
             redditButton.style.display = "none";
         }
         /**
-            * Switch to the Google+ comment section.
-            * @param eventObject The event object of the click of the Google+ button.
+            * Switch to the Disqus comment section.
+            * @param eventObject The event object of the click of the Disqus button.
             * @private
          */
          onGooglePlusClick(eventObject) {
@@ -1302,7 +1314,7 @@ var RoKA;
             else if (this.threadInformation.likes === false) {
                 voteController.classList.add("disliked");
             }
-            /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
+            /* Set the icon, text, and event listener for the button to switch to the Disqus comments. */
             let googlePlusButton;
             let googlePlusContainer;
             if (RoKA.Application.currentMediaService() === Service.YouTube) {
@@ -1393,7 +1405,7 @@ var RoKA;
             new RoKA.Reddit.Report(this.threadInformation.name, this, true);
         }
         /**
-         * Handle the click of the Google+ Button to change to the Google+ comments.
+         * Handle the click of the Disqus Button to change to the Disqus comments.
          * @private
          */
          onGooglePlusClick(eventObject) {
@@ -2172,7 +2184,7 @@ var RoKA;
             let errorImage = this.representedHTMLElement.querySelector("img");
             let errorHeader = this.representedHTMLElement.querySelector("#at_errorheader");
             let errorText = this.representedHTMLElement.querySelector("#at_errortext");
-            /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
+            /* Set the icon, text, and event listener for the button to switch to the Disqus comments. */
             let googlePlusButton;
             let googlePlusContainer;
             if (RoKA.Application.currentMediaService() === Service.YouTube) {
@@ -2249,7 +2261,7 @@ var RoKA;
             RoKA.Application.commentSection = new RoKA.CommentSection(RoKA.Application.getCurrentVideoId());
         }
         /**
-         * Handle the click of the Google+ Button to change to the Google+ comments.
+         * Handle the click of the Disqus Button to change to the Disqus comments.
          * @private
          */
          onGooglePlusClick(eventObject) {
@@ -2298,14 +2310,14 @@ var RoKA;
         constructor(lastVersion) {
             this.migrations = {
                 "2.3": function () {
-                    /* Migrate the previous "Display Google+ by default" setting into the "Default display action" setting. */
+                    /* Migrate the previous "Display Disqus by default" setting into the "Default display action" setting. */
                     let displayGplusPreviousSetting = RoKA.Preferences.getBoolean("displayGooglePlusByDefault");
                     if (displayGplusPreviousSetting === true) {
                         RoKA.Preferences.set("defaultDisplayAction", "gplus");
                     }
                 },
                 "2.5": function () {
-                    /* In 2.5 RoKA now uses the youtube channel ID not the display name for setting RoKA or Google+ as default per channel.
+                    /* In 2.5 RoKA now uses the youtube channel ID not the display name for setting RoKA or Disqus as default per channel.
                     We will attempt to migrate existing entries using the YouTube API  */
                     let previousDisplayActions = RoKA.Preferences.getObject("channelDisplayActions");
                     if (previousDisplayActions) {
