@@ -741,6 +741,9 @@ a[href$="/spoiler"]::before {
     #RoKA[service='KissAnime'] a {
       color: #d5f406;
     }
+    #RoKA[service='KissAnime'] .at_comment_lowercontrols {
+      margin-top: 5px;
+    }
     #RoKA[service='KissAnime'] .at_load {
       color: #d5f406;
     }
@@ -771,8 +774,17 @@ a[href$="/spoiler"]::before {
       font-size: 140%; }
     /* disqus colors are messed up */
     #disqus_thread { color: #000000 !important; }
+    #RoKA[service='KissManga'] a {
+      color: #44B9FA;
+    }
+    #RoKA[service='KissManga'] .at_comment_lowercontrols {
+      margin-top: 5px;
+    }
+    #RoKA[service='KissManga'] .at_load {
+      color: #44B9FA;
+    }
     #RoKA[service='KissManga'] svg {
-        fill:#1FBAEA;
+        fill:#44B9FA;
     }
     #RoKA[service='KissManga'] .at_tab.active {
       border-top: 2px solid #4bf;

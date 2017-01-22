@@ -87,24 +87,24 @@ var RoKA;
                 }
             }
             else if (Application.currentMediaService() === Service.KissAnime) {
-                if ((window.location.pathname.match(/\//g) || []).length === 2) {
+            /**    if ((window.location.pathname.match(/\//g) || []).length === 2) {
                     return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").trim();
                 }
-                else if ((window.location.pathname.match(/\//g) || []).length > 2) {
-                    return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").trim() + " " + parseInt(document.getElementById("selectEpisode").options[document.getElementById("selectEpisode").selectedIndex].textContent.match(/(\.?\d+(\.\d+)?)(?!.*\d)/g));
+                else*/ if ((window.location.pathname.match(/\//g) || []).length > 2) {
+                    return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").trim() + " " + parseInt(document.getElementById("selectEpisode").options[document.getElementById("selectEpisode").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g));
                 }
             }
             else if (Application.currentMediaService() === Service.KissManga) {
-                if ((window.location.pathname.match(/\//g) || []).length === 2) {
+                /** if ((window.location.pathname.match(/\//g) || []).length === 2) {
                     return document.getElementsByTagName("title")[0].innerText.split("\n", 2).join("\n").trim();
                 }
-                else if ((window.location.pathname.match(/\//g) || []).length > 2) {
+                else */if ((window.location.pathname.match(/\//g) || []).length > 2) {
                     //disgusting way to get Name + Chapter
                     if (document.getElementById("selectReadType").options[document.getElementById("selectReadType").selectedIndex].textContent.trim() === "One page") {
-                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+ " " + parseInt(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent.match(/(\.?\d+(\.\d+)?)(?!.*\d)/g));
+                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+ " " + parseInt(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g));
                     }
                     else {
-                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12) + " " + parseInt(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent.match(/(\.?\d+(\.\d+)?)(?!.*\d)/g));
+                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12) + " " + parseInt(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g));
                     }
                 }
             }
@@ -551,7 +551,7 @@ var RoKA;
                     this.set(loadingScreen.HTMLElement);
                     // Open a search request to Reddit for the video identfiier
                     let videoSearchString = this.getVideoSearchString(currentVideoIdentifier);
-                    // alert("https://api.reddit.com/search.json?q=" + videoSearchString);
+                    // console.log("https://api.reddit.com/search.json?q=" + videoSearchString);
                     new RoKA.Reddit.Request("https://api.reddit.com/search.json?q=" + videoSearchString, RoKA.RequestType.GET, function (results) {
                         // There are a number of ways the Reddit API can arbitrarily explode, here are some of them.
                         // alert("res"+JSON.stringify(results, null, 2));
@@ -795,25 +795,29 @@ var RoKA;
                 }
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
-                if ((window.location.pathname.match(/\//g) || []).length === 2) {
+                /** if ((window.location.pathname.match(/\//g) || []).length === 2) {
                     if (itemFromResultSet.subreddit === "anime") {
                         return true;
                     }
                 }
-                else {
-                    if (itemFromResultSet.subreddit === "anime" || (itemFromResultSet.title.indexOf(parseInt(document.getElementById("selectEpisode").options[document.getElementById("selectEpisode").selectedIndex].textContent.match(/(\.?\d+(\.\d+)?)(?!.*\d)/g))) >= 0 && itemFromResultSet.title.toLowerCase().indexOf("episode") >= 0)) {
+                else */ if (itemFromResultSet.subreddit === "anime" || (itemFromResultSet.title.indexOf(parseInt(document.getElementById("selectEpisode").options[document.getElementById("selectEpisode").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g))) >= 0 && itemFromResultSet.title.toLowerCase().indexOf("episode") >= 0)) {
                         return true;
                     }
-                }
+                // }
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                if ((window.location.pathname.match(/\//g) || []).length === 2) {
+                /**if ((window.location.pathname.match(/\//g) || []).length === 2) {
                     if (itemFromResultSet.subreddit === "manga") {
                         return true;
                     }
                 }
+                else*/ if (document.getElementById("selectReadType").options[document.getElementById("selectReadType").selectedIndex].textContent.trim() === "One page") {
+                    if (itemFromResultSet.subreddit === "manga" || itemFromResultSet.title.indexOf(parseInt(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g))) >= 0) {
+                        return true;
+                    }
+                }
                 else {
-                    if (itemFromResultSet.subreddit === "manga" || itemFromResultSet.title.indexOf(parseInt(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent.match(/(\.?\d+(\.\d+)?)(?!.*\d)/g))) >= 0) {
+                    if (itemFromResultSet.subreddit === "manga" && itemFromResultSet.title.indexOf(parseInt(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g))) >= 0) {
                         return true;
                     }
                 }
