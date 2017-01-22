@@ -1,10 +1,10 @@
 {
   "manifest_version": 2,
-  "name": "Reddit on KissAnime",
+  "name": "RoKA (Reddit on KissAnime)",
   "short_name": "ROKA",
-  "description": "Adds Reddit comments to KissAnime and KissManga",
+  "description": "Adds Reddit comments to KissAnime, KissManga and YouTube",
   "author": "myh1000",
-  "homepage_url": "http://same.moe/",
+  "homepage_url": "https://github.com/myh1000/RoKA",
   "version": "1.0",
   "icons": { "16": "icon16.png",
            "48": "icon48.png",
@@ -16,7 +16,7 @@
 
   "content_scripts": [
     {
-      "matches": ["*://www.youtube.com/*", "*://kissanime.ru/*", "*://kissmanga.com/*", "*://vimeo.com/*"],
+      "matches": ["*://www.youtube.com/*", "*://kissanime.ru/*", "*://kissmanga.com/*"],
       "js": ["js/snuownd.js", "js/script.js", "js/running.js"],
       "css": ["res/style.css"],
       "run_at": "document_start"
@@ -28,7 +28,6 @@
     "https://api.reddit.com/",
     "http://kissanime.ru/",
     "http://kissmanga.com/",
-    "http://vimeo.com/",
     "storage"
   ],
 
