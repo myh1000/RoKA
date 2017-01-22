@@ -48,17 +48,6 @@ var RoKA;
                         Application.commentSection = new RoKA.CommentSection(this.currentVideoIdentifier);
                     }
                 }
-                else if (Application.currentMediaService() === Service.Vimeo) {
-                    // Start observer to detect when a new video is loaded.
-                    let observer = new MutationObserver(this.vimeoMutationObserver);
-                    let config = { attributes: true, childList: true, characterData: true };
-                    observer.observe(document.querySelector(".player_area"), config);
-                    // Start a new comment section.
-                    this.currentVideoIdentifier = Application.getCurrentVideoId();
-                    if (RoKA.Utilities.isVideoPage()) {
-                        Application.commentSection = new RoKA.CommentSection(this.currentVideoIdentifier);
-                    }
-                }
             }.bind(this));
         }
         /**
@@ -76,23 +65,6 @@ var RoKA;
                         if (RoKA.Utilities.isVideoPage()) {
                             Application.commentSection = new RoKA.CommentSection(this.currentVideoIdentifier);
                         }
-                    }
-                }
-            }.bind(this));
-        }
-        /**
-            * Mutation Observer for monitoring for whenver the user changes to a new "page" on Vimeo
-            * @param mutations A collection of mutation records
-            * @private
-        */
-        vimeoMutationObserver(mutations) {
-            mutations.forEach(function (mutation) {
-                let target = mutation.target;
-                let reportedVideoId = Application.getCurrentVideoId();
-                if (reportedVideoId !== this.currentVideoIdentifier) {
-                    this.currentVideoIdentifier = reportedVideoId;
-                    if (RoKA.Utilities.isVideoPage()) {
-                        Application.commentSection = new RoKA.CommentSection(this.currentVideoIdentifier);
                     }
                 }
             }.bind(this));
@@ -123,11 +95,6 @@ var RoKA;
                 else if ((window.location.pathname.match(/\//g) || []).length > 2) {
                     //disgusting way to get Name + Chapter
                     return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+" "+parseFloat(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent.match(/(\d+)(?!.*\d)/g));
-                }
-            }
-            else if (Application.currentMediaService() === Service.Vimeo) {
-                if (window.location.pathname.length > 1) {
-                    return window.location.pathname.substring(1);
                 }
             }
             return null;
@@ -229,9 +196,6 @@ var RoKA;
             if (window.location.host === "www.youtube.com") {
                 return Service.YouTube;
             }
-            else if (window.location.host === "vimeo.com") {
-                return Service.Vimeo;
-            }
             else if (window.location.host === "kissanime.ru") {
                 return Service.KissAnime;
             }
@@ -257,9 +221,8 @@ var RoKA;
 var Service;
 (function (Service) {
     Service[Service["YouTube"] = 0] = "YouTube";
-    Service[Service["Vimeo"] = 1] = "Vimeo";
-    Service[Service["KissAnime"] = 2] = "KissAnime";
-    Service[Service["KissManga"] = 3] = "KissManga";
+    Service[Service["KissAnime"] = 1] = "KissAnime";
+    Service[Service["KissManga"] = 2] = "KissManga";
 })(Service || (Service = {}));
 /**
     * Namespace for All RoKA operations.
@@ -355,7 +318,7 @@ var RoKA;
             return ((currentEpochTime - post.created_utc) >= 15552000);
         }
         /**
-            Determine whether the current url of the tab is a YouTube/Vimeo video page.
+            Determine whether the current url of the tab is a a valid page.
         */
         static isVideoPage() {
             if (RoKA.Application.currentMediaService() === Service.YouTube) {
@@ -366,9 +329,6 @@ var RoKA;
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                 return (window.location.pathname.split('/')[1] === "Manga");
-            }
-            else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
-                return (document.querySelector("meta[property='og:type']").getAttribute("content") === "video");
             }
             return false;
         }
@@ -730,10 +690,6 @@ var RoKA;
                 commentsContainer = document.getElementById("disqus_thread").parentElement.parentElement
                 serviceCommentsContainer = document.getElementById("disqus_thread")
             }
-            else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
-                commentsContainer = document.querySelector(".clip_main-content");
-                serviceCommentsContainer = document.querySelector(".iris_comment-wrapper");
-            }
             // alert("this");
             // alert(commentsContainer.innerHTML);
             // alert("SAME"+serviceCommentsContainer.innerHTML);
@@ -834,7 +790,7 @@ var RoKA;
                     return true;
                 }
             }
-            else if (itemFromResultSet.domain === "youtu.be" || itemFromResultSet.domain === "vimeo.com") {
+            else if (itemFromResultSet.domain === "youtu.be") {
                 // For urls based on the shortened youtu.be domain, retrieve everything the path after the domain and compare it.
                 let urlSearch = itemFromResultSet.url.substring(itemFromResultSet.url.lastIndexOf("/") + 1);
                 let obj = urlSearch.split('?');
@@ -863,9 +819,6 @@ var RoKA;
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                 maxWidth = document.getElementById("disqus_thread").parentElement.parentElement.offsetWidth - 80;
-            }
-            else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
-                maxWidth = document.getElementById("comments").offsetWidth - 80;
             }
             let width = (21 + this.threadCollection[0].subreddit.length * 7);
             let i = 0;
@@ -941,26 +894,22 @@ var RoKA;
             let message = template.querySelector(".single_line");
             message.textContent = RoKA.Application.localisationManager.get("post_label_noresults");
             /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
+            let googlePlusButton;
+            let googlePlusContainer;
             if (RoKA.Application.currentMediaService() === Service.YouTube) {
-                var googlePlusButton = template.querySelector("#at_switchtogplus");
+                googlePlusButton = template.querySelector("#at_switchtogplus");
                 template.querySelector("#at_switchtodisqus").style.display = "none";
                 googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-                var googlePlusContainer = document.getElementById("watch-discussion");
+                googlePlusContainer = document.getElementById("watch-discussion");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
 
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                var googlePlusButton = template.querySelector("#at_switchtodisqus");
+                googlePlusButton = template.querySelector("#at_switchtodisqus");
                 template.querySelector("#at_switchtogplus").style.display = "none";
                 googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-                var googlePlusContainer = document.getElementById("disqus_thread");
-            }
-            else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
-                var googlePlusButton = template.querySelector("#at_switchtogplus");
-                template.querySelector("#at_switchtodisqus").style.display = "none";
-                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-                var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
+                googlePlusContainer = document.getElementById("disqus_thread");
             }
             if (RoKA.Preferences.getBoolean("showGooglePlusButton") === false || googlePlusContainer === null) {
                 googlePlusButton.style.display = "none";
@@ -982,17 +931,15 @@ var RoKA;
          * @private
          */
         onRedditClick(eventObject) {
+            let googlePlusContainer;
             if (RoKA.Application.currentMediaService() === Service.YouTube) {
-                var googlePlusContainer = document.getElementById("watch-discussion");
+                googlePlusContainer = document.getElementById("watch-discussion");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
 
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                var googlePlusContainer = document.getElementById("disqus_thread");
-            }
-            else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
-                var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
+                googlePlusContainer = document.getElementById("disqus_thread");
             }
             googlePlusContainer.style.display = "none";
             googlePlusContainer.style.height = "0";
@@ -1009,17 +956,15 @@ var RoKA;
          onGooglePlusClick(eventObject) {
              let RoKAContainer = document.getElementById("RoKA");
              RoKAContainer.style.display = "none";
+             let googlePlusContainer;
              if (RoKA.Application.currentMediaService() === Service.YouTube) {
-                 var googlePlusContainer = document.getElementById("watch-discussion");
+                 googlePlusContainer = document.getElementById("watch-discussion");
              }
              else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
 
              }
              else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                 var googlePlusContainer = document.getElementById("disqus_thread");
-             }
-             else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
-                 var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
+                 googlePlusContainer = document.getElementById("disqus_thread");
              }
              googlePlusContainer.style.display = "";
              googlePlusContainer.style.height = "auto";
@@ -1147,9 +1092,6 @@ var RoKA;
             if (RoKA.Application.currentMediaService() === Service.YouTube) {
                 channelId = document.querySelector("meta[itemprop='channelId']").getAttribute("content");
             }
-            else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
-                channelId = document.querySelector("a.iris_link-header").getAttribute("href").substring(1);
-            }
             let displayActionByUser = RoKA.Preferences.getObject("channelDisplayActions")[channelId];
             if (displayActionByUser) {
                 return displayActionByUser;
@@ -1198,7 +1140,7 @@ var RoKA;
         }
         /**
          * Get the Reddit search string to perform.
-         * @param videoID The YouTube or Vimeo video id to make a search for.
+         * @param videoID The string to make a search for.
          * @returns A search string to send to the Reddit search API.
          * @private
          */
@@ -1210,9 +1152,6 @@ var RoKA;
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
                 return (encodeURI(videoID));
-            }
-            else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
-                return encodeURI(`url:https://vimeo.com/${videoID} OR url:http://vimeo.com/${videoID}`);
             }
         }
     }
@@ -1364,25 +1303,22 @@ var RoKA;
                 voteController.classList.add("disliked");
             }
             /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
+            let googlePlusButton;
+            let googlePlusContainer;
             if (RoKA.Application.currentMediaService() === Service.YouTube) {
-                var googlePlusButton = this.threadContainer.querySelector("#at_switchtogplus");
+                googlePlusButton = this.threadContainer.querySelector("#at_switchtogplus");
                 this.threadContainer.querySelector("#at_switchtodisqus").style.display = "none";
                 googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-                var googlePlusContainer = document.getElementById("watch-discussion");
+                googlePlusContainer = document.getElementById("watch-discussion");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
 
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                var googlePlusButton = this.threadContainer.querySelector("#at_switchtodisqus");
+                googlePlusButton = this.threadContainer.querySelector("#at_switchtodisqus");
                 this.threadContainer.querySelector("#at_switchtogplus").style.display = "none";
                 googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-                var googlePlusContainer = document.getElementById("disqus_thread");
-            }
-            else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
-                var googlePlusButton = this.threadContainer.querySelector("#at_switchtogplus");
-                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-                var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
+                googlePlusContainer = document.getElementById("disqus_thread");
             }
             if (RoKA.Preferences.getBoolean("showGooglePlusButton") === false || googlePlusContainer === null) {
                 googlePlusButton.style.display = "none";
@@ -1463,17 +1399,15 @@ var RoKA;
          onGooglePlusClick(eventObject) {
              let RoKAContainer = document.getElementById("RoKA");
              RoKAContainer.style.display = "none";
+             let googlePlusContainer;
              if (RoKA.Application.currentMediaService() === Service.YouTube) {
-                 var googlePlusContainer = document.getElementById("watch-discussion");
+                 googlePlusContainer = document.getElementById("watch-discussion");
              }
              else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
 
              }
              else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                 var googlePlusContainer = document.getElementById("disqus_thread");
-             }
-             else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
-                 var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
+                 googlePlusContainer = document.getElementById("disqus_thread");
              }
              googlePlusContainer.style.display = "";
              googlePlusContainer.style.height = "auto";
@@ -2239,26 +2173,22 @@ var RoKA;
             let errorHeader = this.representedHTMLElement.querySelector("#at_errorheader");
             let errorText = this.representedHTMLElement.querySelector("#at_errortext");
             /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
+            let googlePlusButton;
+            let googlePlusContainer;
             if (RoKA.Application.currentMediaService() === Service.YouTube) {
-                var googlePlusButton = this.representedHTMLElement.querySelector("#at_switchtogplus");
+                googlePlusButton = this.representedHTMLElement.querySelector("#at_switchtogplus");
                 this.representedHTMLElement.querySelector("#at_switchtodisqus").style.display = "none";
                 googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-                var googlePlusContainer = document.getElementById("watch-discussion");
+                googlePlusContainer = document.getElementById("watch-discussion");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
 
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                var googlePlusButton = this.representedHTMLElement.querySelector("#at_switchtodisqus");
+                googlePlusButton = this.representedHTMLElement.querySelector("#at_switchtodisqus");
                 this.representedHTMLElement.querySelector("#at_switchtogplus").style.display = "none";
                 googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-                var googlePlusContainer = document.getElementById("disqus_thread");
-            }
-            else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
-                var googlePlusButton = this.representedHTMLElement.querySelector("#at_switchtogplus");
-                this.representedHTMLElement.querySelector("#at_switchtodisqus").style.display = "none";
-                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-                var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
+                googlePlusContainer = document.getElementById("disqus_thread");
             }
             if (RoKA.Preferences.getBoolean("showGooglePlusButton") === false || googlePlusContainer === null) {
                 googlePlusButton.style.display = "none";
@@ -2325,17 +2255,15 @@ var RoKA;
          onGooglePlusClick(eventObject) {
              let RoKAContainer = document.getElementById("RoKA");
              RoKAContainer.style.display = "none";
+             let googlePlusContainer;
              if (RoKA.Application.currentMediaService() === Service.YouTube) {
-                 var googlePlusContainer = document.getElementById("watch-discussion");
+                 googlePlusContainer = document.getElementById("watch-discussion");
              }
              else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
 
              }
              else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                 var googlePlusContainer = document.getElementById("disqus_thread");
-             }
-             else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
-                 var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
+                 googlePlusContainer = document.getElementById("disqus_thread");
              }
              googlePlusContainer.style.display = "";
              googlePlusContainer.style.height = "auto";
