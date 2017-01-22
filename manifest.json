@@ -16,15 +16,13 @@
 
   "content_scripts": [
     {
-      "matches": ["*://www.youtube.com/*", "*://kissanime.ru/*", "*://kissmanga.com/*"],
+      "matches": ["*://kissanime.ru/*", "*://kissmanga.com/*"],
       "js": ["js/snuownd.js", "js/script.js", "js/running.js"],
       "css": ["res/style.css"],
       "run_at": "document_start"
     }
   ],
   "permissions": [
-    "http://www.youtube.com/",
-    "https://www.youtube.com/",
     "https://api.reddit.com/",
     "http://kissanime.ru/",
     "http://kissmanga.com/",
