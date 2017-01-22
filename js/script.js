@@ -117,11 +117,12 @@ var RoKA;
             else if (Application.currentMediaService() === Service.KissAnime) {
             }
             else if (Application.currentMediaService() === Service.KissManga) {
-                if ((window.location.pathname.match(/\//g) || []).length == 2) {
+                if ((window.location.pathname.match(/\//g) || []).length === 2) {
                     return document.getElementsByTagName("title")[0].innerText.split("\n", 2).join("\n").trim();
                 }
-                else {
-                    return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12);
+                else if ((window.location.pathname.match(/\//g) || []).length > 2) {
+                    //disgusting way to get Name + Chapter
+                    return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+" "+parseFloat(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent.match(/(\d+)(?!.*\d)/g));
                 }
             }
             else if (Application.currentMediaService() === Service.Vimeo) {
@@ -592,16 +593,11 @@ var RoKA;
                             let finalResultCollection = [];
                             /* Filter out Reddit threads that do not lead to the video. Additionally, remove ones that have passed the 6
                             month threshold for Reddit posts and are in preserved mode, but does not have any comments. */
-                            if (RoKA.Application.currentMediaService() === Service.KissAnime || RoKA.Application.currentMediaService() === Service.KissManga) {
-                                finalResultCollection.push(results.data.children[0].data);
-                            }
-                            else {
-                                searchResults.forEach(function (result) {
-                                    if (CommentSection.validateItemFromResultSet(result.data, currentVideoIdentifier)) {
-                                        finalResultCollection.push(result.data);
-                                    }
-                                });
-                            }
+                            searchResults.forEach(function (result) {
+                                if (CommentSection.validateItemFromResultSet(result.data, currentVideoIdentifier)) {
+                                    finalResultCollection.push(result.data);
+                                }
+                            });
                             let preferredPost, preferredSubreddit;
                             if (finalResultCollection.length > 0) {
                                 if (RoKA.Application.currentMediaService() === Service.YouTube) {
@@ -769,7 +765,7 @@ var RoKA;
                     redditButton.style.display = "block";
                 }
                 else {
-                    serviceCommentsContainer.style.visibility = "collapse";
+                    serviceCommentsContainer.style.display = "none";
                     serviceCommentsContainer.style.height = "0";
                 }
             }
@@ -832,6 +828,13 @@ var RoKA;
                     }
                 }
             }
+            else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
+            }
+            else if (RoKA.Application.currentMediaService() === Service.KissManga) {
+                if (itemFromResultSet.subreddit === "manga") {
+                    return true;
+                }
+            }
             else if (itemFromResultSet.domain === "youtu.be" || itemFromResultSet.domain === "vimeo.com") {
                 // For urls based on the shortened youtu.be domain, retrieve everything the path after the domain and compare it.
                 let urlSearch = itemFromResultSet.url.substring(itemFromResultSet.url.lastIndexOf("/") + 1);
@@ -857,16 +860,15 @@ var RoKA;
                 maxWidth = document.getElementById("watch7-content").offsetWidth - 80;
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
-                maxWidth = document.getElementById("disqus_thread").offsetWidth - 80;
+                maxWidth = document.getElementById("disqus_thread").parentElement.parentElement.offsetWidth - 80;
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                maxWidth = document.getElementById("disqus_thread").offsetWidth - 80;
+                maxWidth = document.getElementById("disqus_thread").parentElement.parentElement.offsetWidth - 80;
             }
             else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
                 maxWidth = document.getElementById("comments").offsetWidth - 80;
             }
             let width = (21 + this.threadCollection[0].subreddit.length * 7);
-            // alert("maxWidth "+maxWidth);
             let i = 0;
             /* Calculate the width of tabs and determine how many you can fit without breaking the bounds of the comment section. */
             if (len > 0) {
@@ -940,15 +942,33 @@ var RoKA;
             let message = template.querySelector(".single_line");
             message.textContent = RoKA.Application.localisationManager.get("post_label_noresults");
             /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
-            let googlePlusButton = template.querySelector("#at_switchtogplus");
-            googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-            let googlePlusContainer = document.getElementById("watch-discussion");
+            if (RoKA.Application.currentMediaService() === Service.YouTube) {
+                var googlePlusButton = template.querySelector("#at_switchtogplus");
+                template.querySelector("#at_switchtodisqus").style.display = "none";
+                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
+                var googlePlusContainer = document.getElementById("watch-discussion");
+            }
+            else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
+
+            }
+            else if (RoKA.Application.currentMediaService() === Service.KissManga) {
+                var googlePlusButton = template.querySelector("#at_switchtodisqus");
+                template.querySelector("#at_switchtogplus").style.display = "none";
+                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
+                var googlePlusContainer = document.getElementById("disqus_thread");
+            }
+            else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
+                var googlePlusButton = template.querySelector("#at_switchtogplus");
+                template.querySelector("#at_switchtodisqus").style.display = "none";
+                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
+                var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
+            }
             if (RoKA.Preferences.getBoolean("showGooglePlusButton") === false || googlePlusContainer === null) {
                 googlePlusButton.style.display = "none";
             }
             this.set(template);
             if (RoKA.Preferences.getBoolean("showGooglePlusWhenNoPosts") && googlePlusContainer) {
-                googlePlusContainer.style.visibility = "visible";
+                googlePlusContainer.style.display = "";
                 googlePlusContainer.style.height = "auto";
                 document.getElementById("RoKA").style.display = "none";
                 let redditButton = document.getElementById("at_switchtoreddit");
@@ -963,7 +983,6 @@ var RoKA;
          * @private
          */
         onRedditClick(eventObject) {
-            alert("sss")
             if (RoKA.Application.currentMediaService() === Service.YouTube) {
                 var googlePlusContainer = document.getElementById("watch-discussion");
             }
@@ -976,7 +995,7 @@ var RoKA;
             else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
                 var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
             }
-            googlePlusContainer.style.visibility = "collapse";
+            googlePlusContainer.style.display = "none";
             googlePlusContainer.style.height = "0";
             let RoKAContainer = document.getElementById("RoKA");
             RoKAContainer.style.display = "block";
@@ -989,7 +1008,6 @@ var RoKA;
             * @private
          */
          onGooglePlusClick(eventObject) {
-             alert("ggg");
              let RoKAContainer = document.getElementById("RoKA");
              RoKAContainer.style.display = "none";
              if (RoKA.Application.currentMediaService() === Service.YouTube) {
@@ -1004,7 +1022,7 @@ var RoKA;
              else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
                  var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
              }
-             googlePlusContainer.style.visibility = "visible";
+             googlePlusContainer.style.display = "";
              googlePlusContainer.style.height = "auto";
              let redditButton = document.getElementById("at_switchtoreddit");
              redditButton.style.display = "block";
@@ -1207,7 +1225,7 @@ var RoKA;
     * @namespace RoKA
 */
 var RoKA;
-(function (RoKA_1) {
+(function (RoKA) {
     /**
         * Creates a new instance of a Comment Thread and adds it to DOM.
         * @class CommentThread
@@ -1229,19 +1247,19 @@ var RoKA;
             this.commentSection = commentSection;
             this.threadInformation = threadData[0].data.children[0].data;
             this.commentData = threadData[1].data.children;
-            RoKA_1.Preferences.set("redditUserIdentifierHash", threadData[0].data.modhash);
-            this.postIsInPreservedMode = RoKA_1.Utilities.isRedditPreservedPost(this.threadInformation);
-            let template = RoKA_1.Application.getExtensionTemplateItem(this.commentSection.template, "threadcontainer");
+            RoKA.Preferences.set("redditUserIdentifierHash", threadData[0].data.modhash);
+            this.postIsInPreservedMode = RoKA.Utilities.isRedditPreservedPost(this.threadInformation);
+            let template = RoKA.Application.getExtensionTemplateItem(this.commentSection.template, "threadcontainer");
             this.threadContainer = template.querySelector("#at_comments");
             if (threadData[0].data.modhash.length > 0) {
                 this.commentSection.userIsSignedIn = true;
-                if (!threadData[0].data.modhash || !RoKA_1.Preferences.getString("username")) {
+                if (!threadData[0].data.modhash || !RoKA.Preferences.getString("username")) {
                     new RoKA.Reddit.RetreiveUsernameRequest();
                 }
             }
             else {
                 this.commentSection.userIsSignedIn = false;
-                RoKA_1.Preferences.set("username", "");
+                RoKA.Preferences.set("username", "");
                 this.threadContainer.classList.add("signedout");
             }
             /* Set the thread title and link to it, because Reddit for some reason encodes html entities in the title, we must use
@@ -1273,8 +1291,8 @@ var RoKA;
                 let optionsElement = this.threadContainer.querySelector(".options");
                 let nsfwElement = document.createElement("acronym");
                 nsfwElement.classList.add("nsfw");
-                nsfwElement.setAttribute("title", RoKA_1.Application.localisationManager.get("post_badge_NSFW_message"));
-                nsfwElement.textContent = RoKA_1.Application.localisationManager.get("post_badge_NSFW");
+                nsfwElement.setAttribute("title", RoKA.Application.localisationManager.get("post_badge_NSFW_message"));
+                nsfwElement.textContent = RoKA.Application.localisationManager.get("post_badge_NSFW");
                 optionsElement.insertBefore(nsfwElement, optionsElement.firstChild);
             }
             /* Set the gild (how many times the user has been given gold for this post) if any */
@@ -1284,23 +1302,23 @@ var RoKA;
             }
             /* Set the the thread posted time */
             let timestamp = this.threadContainer.querySelector(".at_timestamp");
-            timestamp.textContent = RoKA_1.Application.getHumanReadableTimestamp(this.threadInformation.created_utc);
+            timestamp.textContent = RoKA.Application.getHumanReadableTimestamp(this.threadInformation.created_utc);
             timestamp.setAttribute("timestamp", new Date(this.threadInformation.created_utc).toISOString());
             /* Set the localised text for "by {username}" */
             let submittedByUsernameText = this.threadContainer.querySelector(".templateSubmittedByUsernameText");
-            submittedByUsernameText.textContent = RoKA_1.Application.localisationManager.get("post_submitted_preposition");
+            submittedByUsernameText.textContent = RoKA.Application.localisationManager.get("post_submitted_preposition");
             /* Set the text for the comments button  */
             let openNewCommentBox = this.threadContainer.querySelector(".commentTo");
-            openNewCommentBox.textContent = this.threadInformation.num_comments + " " + RoKA_1.Application.localisationManager.get("post_button_comments").toLowerCase();
+            openNewCommentBox.textContent = this.threadInformation.num_comments + " " + RoKA.Application.localisationManager.get("post_button_comments").toLowerCase();
             openNewCommentBox.addEventListener("click", this.onCommentButtonClick.bind(this), false);
             /* Set the button text and the event handler for the "save" button */
             let saveItemToRedditList = this.threadContainer.querySelector(".save");
             if (this.threadInformation.saved) {
-                saveItemToRedditList.textContent = RoKA_1.Application.localisationManager.get("post_button_unsave");
+                saveItemToRedditList.textContent = RoKA.Application.localisationManager.get("post_button_unsave");
                 saveItemToRedditList.setAttribute("saved", "true");
             }
             else {
-                saveItemToRedditList.textContent = RoKA_1.Application.localisationManager.get("post_button_save");
+                saveItemToRedditList.textContent = RoKA.Application.localisationManager.get("post_button_save");
             }
             saveItemToRedditList.addEventListener("click", this.onSaveButtonClick.bind(this), false);
             /* Set the button text and the event handler for the "refresh" button */
@@ -1312,23 +1330,23 @@ var RoKA;
                     }
                 });
             }, false);
-            refreshCommentThread.textContent = RoKA_1.Application.localisationManager.get("post_button_refresh");
+            refreshCommentThread.textContent = RoKA.Application.localisationManager.get("post_button_refresh");
             /* Set the button text and the link for the "give gold" button */
             let giveGoldToUser = this.threadContainer.querySelector(".giveGold");
             giveGoldToUser.setAttribute("href", "http://www.reddit.com/gold?goldtype=gift&months=1&thing=" + this.threadInformation.name);
-            giveGoldToUser.textContent = RoKA_1.Application.localisationManager.get("post_button_gold");
+            giveGoldToUser.textContent = RoKA.Application.localisationManager.get("post_button_gold");
             /* Set the button text and the event handler for the "report post" button */
             let reportToAdministrators = this.threadContainer.querySelector(".report");
-            reportToAdministrators.textContent = RoKA_1.Application.localisationManager.get("post_button_report");
+            reportToAdministrators.textContent = RoKA.Application.localisationManager.get("post_button_report");
             reportToAdministrators.addEventListener("click", this.onReportButtonClicked.bind(this), false);
             /* Set the button text and event handler for the sort selector. */
             let sortController = this.threadContainer.querySelector(".sort");
             for (var sortIndex = 0, sortLength = this.sortingTypes.length; sortIndex < sortLength; sortIndex += 1) {
-                sortController.children[sortIndex].textContent = RoKA_1.Application.localisationManager.get("post_sort_" + this.sortingTypes[sortIndex]);
+                sortController.children[sortIndex].textContent = RoKA.Application.localisationManager.get("post_sort_" + this.sortingTypes[sortIndex]);
             }
-            sortController.selectedIndex = this.sortingTypes.indexOf(RoKA_1.Preferences.getString("threadSortType"));
+            sortController.selectedIndex = this.sortingTypes.indexOf(RoKA.Preferences.getString("threadSortType"));
             sortController.addEventListener("change", function () {
-                RoKA_1.Preferences.set("threadSortType", sortController.children[sortController.selectedIndex].getAttribute("value"));
+                RoKA.Preferences.set("threadSortType", sortController.children[sortController.selectedIndex].getAttribute("value"));
                 commentSection.threadCollection.forEach(function (item) {
                     if (item.id === this.threadInformation.id) {
                         this.commentSection.downloadThread(item);
@@ -1367,7 +1385,7 @@ var RoKA;
                 googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
                 var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
             }
-            if (RoKA_1.Preferences.getBoolean("showGooglePlusButton") === false || googlePlusContainer === null) {
+            if (RoKA.Preferences.getBoolean("showGooglePlusButton") === false || googlePlusContainer === null) {
                 googlePlusButton.style.display = "none";
             }
             /* Mark the post as preserved if applicable */
@@ -1376,24 +1394,24 @@ var RoKA;
             }
             else {
                 if (this.commentSection.userIsSignedIn) {
-                    new RoKA_1.CommentField(this);
+                    new RoKA.CommentField(this);
                 }
             }
             /* If this post is prioritised (official) mark it as such in the header */
             if (this.threadInformation.official) {
                 let officialLabel = this.threadContainer.querySelector(".at_official");
-                officialLabel.textContent = RoKA_1.Application.localisationManager.get("post_message_official");
+                officialLabel.textContent = RoKA.Application.localisationManager.get("post_message_official");
                 officialLabel.style.display = "inline-block";
             }
             /* Start iterating the top level comments in the comment section */
             this.commentData.forEach(function (commentObject) {
                 if (commentObject.kind === "more") {
-                    let readmore = new RoKA_1.LoadMore(commentObject.data, this, this);
+                    let readmore = new RoKA.LoadMore(commentObject.data, this, this);
                     this.children.push(readmore);
                     this.threadContainer.appendChild(readmore.representedHTMLElement);
                 }
                 else {
-                    let comment = new RoKA_1.Comment(commentObject.data, this);
+                    let comment = new RoKA.Comment(commentObject.data, this);
                     this.children.push(comment);
                     this.threadContainer.appendChild(comment.representedHTMLElement);
                 }
@@ -1423,11 +1441,11 @@ var RoKA;
             new RoKA.Reddit.SaveRequest(this.threadInformation.name, savedType, function () {
                 if (savedType === RoKA.Reddit.SaveType.SAVE) {
                     saveButton.setAttribute("saved", "true");
-                    saveButton.textContent = RoKA_1.Application.localisationManager.get("post_button_unsave");
+                    saveButton.textContent = RoKA.Application.localisationManager.get("post_button_unsave");
                 }
                 else {
                     saveButton.removeAttribute("saved");
-                    saveButton.textContent = RoKA_1.Application.localisationManager.get("post_button_save");
+                    saveButton.textContent = RoKA.Application.localisationManager.get("post_button_save");
                 }
             });
         }
@@ -1444,7 +1462,6 @@ var RoKA;
          * @private
          */
          onGooglePlusClick(eventObject) {
-             alert("ggg");
              let RoKAContainer = document.getElementById("RoKA");
              RoKAContainer.style.display = "none";
              if (RoKA.Application.currentMediaService() === Service.YouTube) {
@@ -1459,7 +1476,7 @@ var RoKA;
              else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
                  var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
              }
-             googlePlusContainer.style.visibility = "visible";
+             googlePlusContainer.style.display = "";
              googlePlusContainer.style.height = "auto";
              let redditButton = document.getElementById("at_switchtoreddit");
              redditButton.style.display = "block";
@@ -1540,10 +1557,10 @@ var RoKA;
             if (previousCommentBox) {
                 previousCommentBox.parentNode.removeChild(previousCommentBox);
             }
-            new RoKA_1.CommentField(this);
+            new RoKA.CommentField(this);
         }
     }
-    RoKA_1.CommentThread = CommentThread;
+    RoKA.CommentThread = CommentThread;
 })(RoKA || (RoKA = {}));
 /// <reference path="index.ts" />
 /**
@@ -2223,9 +2240,27 @@ var RoKA;
             let errorHeader = this.representedHTMLElement.querySelector("#at_errorheader");
             let errorText = this.representedHTMLElement.querySelector("#at_errortext");
             /* Set the icon, text, and event listener for the button to switch to the Google+ comments. */
-            let googlePlusButton = this.representedHTMLElement.querySelector("#at_switchtogplus");
-            googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
-            let googlePlusContainer = document.getElementById("watch-discussion");
+            if (RoKA.Application.currentMediaService() === Service.YouTube) {
+                var googlePlusButton = this.representedHTMLElement.querySelector("#at_switchtogplus");
+                this.representedHTMLElement.querySelector("#at_switchtodisqus").style.display = "none";
+                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
+                var googlePlusContainer = document.getElementById("watch-discussion");
+            }
+            else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
+
+            }
+            else if (RoKA.Application.currentMediaService() === Service.KissManga) {
+                var googlePlusButton = this.representedHTMLElement.querySelector("#at_switchtodisqus");
+                this.representedHTMLElement.querySelector("#at_switchtogplus").style.display = "none";
+                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
+                var googlePlusContainer = document.getElementById("disqus_thread");
+            }
+            else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
+                var googlePlusButton = this.representedHTMLElement.querySelector("#at_switchtogplus");
+                this.representedHTMLElement.querySelector("#at_switchtodisqus").style.display = "none";
+                googlePlusButton.addEventListener("click", this.onGooglePlusClick, false);
+                var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
+            }
             if (RoKA.Preferences.getBoolean("showGooglePlusButton") === false || googlePlusContainer === null) {
                 googlePlusButton.style.display = "none";
             }
@@ -2289,7 +2324,6 @@ var RoKA;
          * @private
          */
          onGooglePlusClick(eventObject) {
-             alert("ggg");
              let RoKAContainer = document.getElementById("RoKA");
              RoKAContainer.style.display = "none";
              if (RoKA.Application.currentMediaService() === Service.YouTube) {
@@ -2304,7 +2338,7 @@ var RoKA;
              else if (RoKA.Application.currentMediaService() === Service.Vimeo) {
                  var googlePlusContainer = document.querySelector(".iris_comment-wrapper");
              }
-             googlePlusContainer.style.visibility = "visible";
+             googlePlusContainer.style.display = "";
              googlePlusContainer.style.height = "auto";
              let redditButton = document.getElementById("at_switchtoreddit");
              redditButton.style.display = "block";

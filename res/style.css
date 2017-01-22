@@ -717,8 +717,7 @@ a[href$="/spoiler"]::before {
 #allowOnChannelContainer {
   margin-left: 15px; }
 
-#RoKA[service='YouTube'] {
-  margin-top: -40px; }
+#RoKA[service='YouTube'] {}
   #RoKA[service='YouTube'] .at_tab.active {
     border-bottom: 5px solid #fd4040; }
     #RoKA[service='YouTube'] .at_tab.active > a {
@@ -739,6 +738,8 @@ a[href$="/spoiler"]::before {
     }
     #RoKA[service='KissManga'] header .title {
       font-size: 140%; }
+    /* disqus colors are messed up */
+    #disqus_thread { color: #000000 !important; }
     #RoKA[service='KissManga'] .at_tab.active {
       border-top: 2px solid #4bf;
       border-bottom: 5px solid #4bf; }
