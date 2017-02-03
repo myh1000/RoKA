@@ -34,4 +34,4 @@ By using this extension, you signify your acceptance of this policy. If you do n
 ###Contact
 If you have any questions about this Privacy Policy, the practices of this extension, or your dealings with this extension, please contact myh1000@gmail.com.
 
-This document was last updated on 2015-08-08.
+This document was last updated on 2017-02-02.
