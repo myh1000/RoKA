@@ -499,6 +499,7 @@ var RoKA;
                 "theredpill",
                 "redpillwomen",
                 "whiterights",
+                "theenigmablade",
                 "whiterightsuk",
                 "northwestfront",
                 "gdnews",
