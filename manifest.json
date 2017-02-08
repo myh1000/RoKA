@@ -19,7 +19,7 @@
       "matches": ["*://www.youtube.com/*", "*://kissanime.ru/*", "*://kissmanga.com/*"],
       "js": ["js/snuownd.js", "js/script.js", "js/running.js"],
       "css": ["res/style.css"],
-      "run_at": "document_start"
+      "run_at": "document_end"
     }
   ],
   "permissions": [

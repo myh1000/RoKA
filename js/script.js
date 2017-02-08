@@ -91,7 +91,7 @@ var RoKA;
                     return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").trim();
                 }
                 else*/ if ((window.location.pathname.match(/\//g) || []).length > 2) {
-                    return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").trim() + " " + parseInt(document.getElementById("selectEpisode").options[document.getElementById("selectEpisode").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g));
+                    return (document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").trim() + " " + parseInt(document.getElementById("selectEpisode").options[document.getElementById("selectEpisode").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g))).replace("(Sub) ", "").replace("(Dub) ", "")
                 }
             }
             else if (Application.currentMediaService() === Service.KissManga) {
