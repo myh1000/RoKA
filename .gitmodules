@@ -1,0 +1,3 @@
+[submodule "js/manga-parser"]
+	path = js/manga-parser
+	url = https://github.com/myh1000/manga-parser.git
