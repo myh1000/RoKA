@@ -104,6 +104,7 @@ var RoKA;
                         return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+ " " + parseInt(parse(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent));
                     }
                     else {
+                        console.log(document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12) + " " + parseInt(parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent)));
                         return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12) + " " + parseInt(parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent));
                     }
                 }
@@ -555,7 +556,6 @@ var RoKA;
                     // console.log("https://api.reddit.com/search.json?q=" + videoSearchString);
                     new RoKA.Reddit.Request("https://api.reddit.com/search.json?q=" + videoSearchString, RoKA.RequestType.GET, function (results) {
                         // There are a number of ways the Reddit API can arbitrarily explode, here are some of them.
-                        // alert("res"+JSON.stringify(results, null, 2));
                         if (results === {} || results.kind !== 'Listing' || results.data.children.length === 0) {
                             this.returnNoResults();
                         }
@@ -813,12 +813,12 @@ var RoKA;
                     }
                 }
                 else*/ if (document.getElementById("selectReadType").options[document.getElementById("selectReadType").selectedIndex].textContent.trim() === "One page") {
-                    if (itemFromResultSet.subreddit === "manga" && itemFromResultSet.title.indexOf(parseInt(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g))) >= 0) {
+                    if (itemFromResultSet.subreddit === "manga" && itemFromResultSet.title.indexOf(parseInt(parse(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent))) >= 0) {
                         return true;
                     }
                 }
                 else {
-                    if (itemFromResultSet.subreddit === "manga" && itemFromResultSet.title.indexOf(parseInt(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g))) >= 0) {
+                    if (itemFromResultSet.subreddit === "manga" && itemFromResultSet.title.indexOf(parseInt(parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent))) >= 0) {
                         return true;
                     }
                 }
