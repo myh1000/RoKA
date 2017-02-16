@@ -101,10 +101,10 @@ var RoKA;
                 else */if ((window.location.pathname.match(/\//g) || []).length > 2) {
                     //disgusting way to get Name + Chapter
                     if (document.getElementById("selectReadType").options[document.getElementById("selectReadType").selectedIndex].textContent.trim() === "One page") {
-                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+ " " + parseInt(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g));
+                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+ " " + parseInt(parse(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent));
                     }
                     else {
-                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12) + " " + parseInt(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g));
+                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12) + " " + parseInt(parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent));
                     }
                 }
             }
@@ -336,10 +336,10 @@ var RoKA;
                 return (window.location.pathname === "/watch")
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
-                return (window.location.pathname.split('/')[1] === "Anime");
+                return (window.location.pathname.split('/')[1].toLowerCase() === "anime");
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                return (window.location.pathname.split('/')[1] === "Manga");
+                return (window.location.pathname.split('/')[1].toLowerCase() === "manga");
             }
             return false;
         }
