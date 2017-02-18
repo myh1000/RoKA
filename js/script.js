@@ -101,11 +101,10 @@ var RoKA;
                 else */if ((window.location.pathname.match(/\//g) || []).length > 2) {
                     //disgusting way to get Name + Chapter
                     if (document.getElementById("selectReadType").options[document.getElementById("selectReadType").selectedIndex].textContent.trim() === "One page") {
-                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+ " " + parseInt(parse(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent));
+                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+ " " + parse(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent);
                     }
                     else {
-                        console.log(document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12) + " " + parseInt(parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent)));
-                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12) + " " + parseInt(parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent));
+                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12) + " " + parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent);
                     }
                 }
             }
@@ -813,12 +812,12 @@ var RoKA;
                     }
                 }
                 else*/ if (document.getElementById("selectReadType").options[document.getElementById("selectReadType").selectedIndex].textContent.trim() === "One page") {
-                    if (itemFromResultSet.subreddit === "manga" && itemFromResultSet.title.indexOf(parseInt(parse(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent))) >= 0) {
+                    if (itemFromResultSet.subreddit === "manga" && itemFromResultSet.title.indexOf(parse(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent)) >= 0) {
                         return true;
                     }
                 }
                 else {
-                    if (itemFromResultSet.subreddit === "manga" && itemFromResultSet.title.indexOf(parseInt(parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent))) >= 0) {
+                    if (itemFromResultSet.subreddit === "manga" && itemFromResultSet.title.indexOf(parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent)) >= 0) {
                         return true;
                     }
                 }
