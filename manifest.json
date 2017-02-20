@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "RoKA (Reddit on KissAnime)",
-  "short_name": "ROKA",
+  "short_name": "RoKA",
   "description": "Adds Reddit comments to KissAnime, KissManga",
   "author": "myh1000",
   "homepage_url": "https://github.com/myh1000/RoKA",
