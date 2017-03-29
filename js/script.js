@@ -104,6 +104,7 @@ var RoKA;
                         return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+ " " + parse(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent);
                     }
                     else {
+                        console.log(document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12) + " " + parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent));
                         return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12) + " " + parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent);
                     }
                 }
@@ -552,7 +553,7 @@ var RoKA;
                     this.set(loadingScreen.HTMLElement);
                     // Open a search request to Reddit for the video identfiier
                     let videoSearchString = this.getVideoSearchString(currentVideoIdentifier);
-                    // console.log("https://api.reddit.com/search.json?q=" + videoSearchString);
+                    console.log("https://api.reddit.com/search.json?q=" + videoSearchString);
                     new RoKA.Reddit.Request("https://api.reddit.com/search.json?q=" + videoSearchString, RoKA.RequestType.GET, function (results) {
                         // There are a number of ways the Reddit API can arbitrarily explode, here are some of them.
                         if (results === {} || results.kind !== 'Listing' || results.data.children.length === 0) {
