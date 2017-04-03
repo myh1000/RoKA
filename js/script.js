@@ -796,31 +796,18 @@ var RoKA;
                 }
             }
             else if (RoKA.Application.currentMediaService() === Service.KissAnime) {
-                /** if ((window.location.pathname.match(/\//g) || []).length === 2) {
-                    if (itemFromResultSet.subreddit === "anime") {
-                        return true;
-                    }
+                if (itemFromResultSet.subreddit === "anime" && (itemFromResultSet.title.indexOf(parseInt(document.getElementById("selectEpisode").options[document.getElementById("selectEpisode").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g))) >= 0 && itemFromResultSet.title.toLowerCase().indexOf("episode") >= 0) || (itemFromResultSet.title.indexOf(parseInt(document.getElementById("selectEpisode").options[document.getElementById("selectEpisode").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g))) >= 0 && itemFromResultSet.title.toLowerCase().indexOf("episode") >= 0)) {
+                    return true;
                 }
-                else */ if (itemFromResultSet.subreddit === "anime" && (itemFromResultSet.title.indexOf(parseInt(document.getElementById("selectEpisode").options[document.getElementById("selectEpisode").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g))) >= 0 && itemFromResultSet.title.toLowerCase().indexOf("episode") >= 0) || (itemFromResultSet.title.indexOf(parseInt(document.getElementById("selectEpisode").options[document.getElementById("selectEpisode").selectedIndex].textContent.match(/(\d+(\.\d+)?)(?!.*\d)/g))) >= 0 && itemFromResultSet.title.toLowerCase().indexOf("episode") >= 0)) {
-                        return true;
-                    }
-                // }
             }
             else if (RoKA.Application.currentMediaService() === Service.KissManga) {
-                /**if ((window.location.pathname.match(/\//g) || []).length === 2) {
-                    if (itemFromResultSet.subreddit === "manga") {
-                        return true;
-                    }
-                }
-                else*/ if (document.getElementById("selectReadType").options[document.getElementById("selectReadType").selectedIndex].textContent.trim() === "One page") {
+                if (document.getElementById("selectReadType").options[document.getElementById("selectReadType").selectedIndex].textContent.trim() === "One page") {
                     if (itemFromResultSet.subreddit === "manga" && itemFromResultSet.title.indexOf(parse(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent)) >= 0) {
                         return true;
                     }
                 }
-                else {
-                    if (itemFromResultSet.subreddit === "manga" && itemFromResultSet.title.indexOf(parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent)) >= 0) {
-                        return true;
-                    }
+                else if (itemFromResultSet.subreddit === "manga" && parse(itemFromResultSet.title) == parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent)) {
+                    return true;
                 }
             }
             else if (itemFromResultSet.domain === "youtu.be") {
