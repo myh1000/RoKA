@@ -15,9 +15,16 @@ KissManga            |  KissAnime
 
 ## Installing from Source
 
-1. Download the zip file or clone the git repository
+1. Clone the git repository
+```shell
+git clone https://github.com/myh1000/RoKA.git
+```
+2. Pull the submodules
+```shell
+git submodule update --init --recursive --remote
+```
 2. Unpack and save to a secure location
-2. Go to the extension list: chrome://extensions
-3. Activate "Developers Mode"
-4. Click "Load unpacked extension…"
-5. Look for the folder with the extension and enjoy
+3. Go to the extension list: chrome://extensions
+4. Activate "Developers Mode"
+5. Click "Load unpacked extension…"
+6. Look for the folder with the extension and enjoy
