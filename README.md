@@ -8,9 +8,9 @@ Get it on the [Chrome Web Store!](https://chrome.google.com/webstore/detail/roka
 
 Original source code and inspiration from [alientube](https://github.com/xlexi/alientube/).
 
-KissManga            |  KissAnime
+KissAnime            |  KissManga
 :-------------------:|:--------------------:
-![](kissmangasc.png) | ![](kissanimesc.png)
+![](kissanimesc.png) | ![](kissmangasc.png)
 
 
 ## Installing from Source
