@@ -5,7 +5,7 @@
   "description": "RoKA embeds Reddit comments to KissAnime and KissManga!",
   "author": "myh1000",
   "homepage_url": "https://github.com/myh1000/RoKA",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "icons": { "16": "icon16.png",
            "48": "icon48.png",
           "128": "icon128.png" },
@@ -16,15 +16,13 @@
 
   "content_scripts": [
     {
-      "matches": ["*://www.youtube.com/*", "*://kissanime.ru/*", "*://kissmanga.com/*"],
+      "matches": ["*://kissanime.ru/*", "*://kissmanga.com/*"],
       "js": ["js/snuownd.js", "js/script.js", "js/manga-parser/mangaparser.js"],
       "css": ["res/style.css"],
       "run_at": "document_end"
     }
   ],
   "permissions": [
-    "http://www.youtube.com/",
-    "https://www.youtube.com/",
     "https://api.reddit.com/",
     "http://kissanime.ru/",
     "http://kissmanga.com/",
