@@ -104,8 +104,8 @@ var RoKA;
                         return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12)+ " " + parse(document.getElementById("selectChapter").options[document.getElementById("selectChapter").selectedIndex].textContent);
                     }
                     else {
-                        console.log(document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12) + " " + parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent));
-                        return document.getElementsByTagName("title")[0].innerText.split("\n", 3).join("\n").substring(12) + " " + parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent);
+                        console.log(document.getElementById('navsubbar').getElementsByTagName('a')[0].innerHTML.split('\n')[2] + " " + parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent));
+                        return document.getElementById('navsubbar').getElementsByTagName('a')[0].innerHTML.split('\n')[2] + " " + parse(document.querySelector(".selectChapter").options[document.querySelector(".selectChapter").selectedIndex].textContent);
                     }
                 }
             }
